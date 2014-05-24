@@ -16,9 +16,6 @@ using namespace std;
 
 namespace Ael {
 
-
-
-
 //////////////////////////////////////////////
 // AUDIO EFFECTS
 	class AelEffects{
@@ -39,7 +36,6 @@ namespace Ael {
 		char channels;
 		int peek;
 		int sampleRate;
-		
 
 	public:
 		AelAudioStream(string);
