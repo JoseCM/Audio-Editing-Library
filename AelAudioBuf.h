@@ -5,27 +5,24 @@
 
 #include <sndfile.hh>
 #include <iostream>
-
-//comentario do ze
-
-
-
-/*
-sample
-
-*/
+#include <stdexcept>
 
 using namespace std;
 
 namespace Ael {
 
-//////////////////////////////////////////////
-// AUDIO EFFECTS
-	class AelEffects{
-		string effectName;
+
+	class AelFrame {
+
+	private:
+		int* samples;
+		int n_channels;
+
 	public:
-		virtual string getEffectName() = 0;
-		// int m_turnOn();
+		AelFrame(int);
+		AelFrame(int*, int);
+		int& operator[](int);
+		~AelFrame();
 	};
 
 //////////////////////////////////////////////
@@ -47,6 +44,7 @@ namespace Ael {
 		int getchannels(){ return channels; }
 		int getpeek() { return peek; }
 		int getsampleRate() { return sampleRate; }
+		AelFrame& getNextFrame();
 		void SaveToFile(string);
 		virtual ~AelAudioStream();
 		
@@ -54,7 +52,6 @@ namespace Ael {
 
 
 }
-
 
 #endif
 
