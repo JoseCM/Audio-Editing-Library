@@ -1,0 +1,3 @@
+AelException (classe base)
+FailCreateBuffer
+NoMoreSample
