@@ -14,6 +14,7 @@ namespace Ael{
 	AelAudioStream::AelAudioStream(string FileName)
 	{
 		SndfileHandle file(FileName);
+		int* aux_vector;
 
 		if (file.error()){
 			throw AelExecption("Open File Error");
@@ -25,49 +26,83 @@ namespace Ael{
 		sampleRate = file.samplerate();
 
 		try{
+			aux_vector = new int[STREAM_LEN];
+			m_panStream.resize(STREAM_LEN);
+			currPosition = 0;
+			file.readf(aux_vector, m_nframes);
 
-			m_panStream = new int[m_nframes * channels];
-			currPosition = m_panStream;
-			file.readf(m_panStream, m_nframes);
+			for (int i = 0; i < STREAM_LEN; i++){
+				m_panStream[i] = aux_vector[i];
+			}
 
+			peek = 0;
+
+			for (int i = 0; i < STREAM_LEN; i++){
+				if (abs(m_panStream[i]) > peek) peek = abs(m_panStream[i]);
+			}
+
+			delete [] aux_vector;
 		}
 		catch (bad_alloc& err){
 			throw AelExecption("Allocating Error");
-			currPosition = m_panStream = NULL;
+			currPosition = 0;
+		}
+	}
+
+	AelAudioStream::AelAudioStream(int nChannels, int nSampleRate) : currPosition(0), channels(nChannels),
+	sampleRate(nSampleRate), peek(0), m_nframes(0){}
+
+	bool AelAudioStream::AddFrames(AelFrame& new_frame){
+		if (new_frame.getChannels() != channels){
+			return false;
 		}
 
-		peek = 0;
-
-		for (int i = 0; i < m_nframes * channels; i++){
-			if (abs(m_panStream[i]) > peek) peek = abs(m_panStream[i]);
+		for (int i = 0; i < channels; i++){
+			if (abs(new_frame[i]) > peek) peek = abs(new_frame[i]);
+			m_panStream.push_back(new_frame[i]);
 		}
 
-
+		++m_nframes;
+		return true;
 	}
 
 	void AelAudioStream::SaveToFile(string file_name){
-		SndfileHandle file = SndfileHandle(file_name, SFM_WRITE, SF_FORMAT_WAV | SF_FORMAT_PCM_32, channels, sampleRate);
-		file.write(m_panStream, STREAM_LEN);
+		int* aux_vector;
+
+		try{
+			aux_vector = new int[STREAM_LEN];
+
+			for (int i = 0; i < STREAM_LEN; i++){
+				aux_vector[i] = m_panStream[i];
+			}
+
+			SndfileHandle file = SndfileHandle(file_name, SFM_WRITE, SF_FORMAT_WAV | SF_FORMAT_PCM_32, channels, sampleRate);
+			file.write(aux_vector, STREAM_LEN);
+
+			delete [] aux_vector;
+		}
+		catch (bad_alloc& err){
+			throw AelExecption("Allocating Error");
+		}
+		
 	}
 
 
 	AelFrame& AelAudioStream::getNextFrame(){
 
-		if (m_panStream + STREAM_LEN >= currPosition){
+		if (STREAM_LEN <= currPosition){
 			throw AelExecption("No more Frames");
 		}
-		else{
-			AelFrame* new_frame = new AelFrame(currPosition, channels);
-			currPosition += channels;
+		else {
+			AelFrame* new_frame = new AelFrame(channels);
+			for (int i = 0; i < channels; i++)
+				new_frame[i] = m_panStream[currPosition++];
 			return *new_frame;
 		}
 
 	}
 
-	AelAudioStream::~AelAudioStream()
-	{
-		if (m_panStream) delete m_panStream;
-	}
+	AelAudioStream::~AelAudioStream() {}
 	//////////////////////////////////////////////
 
 
@@ -82,6 +117,8 @@ namespace Ael{
 			samples[i] = arr[i];
 		}
 	}
+
+	int AelFrame::getChannels() { return n_channels; }
 	int& AelFrame::operator[](int i) {
 
 		if (i<0 || i>n_channels)

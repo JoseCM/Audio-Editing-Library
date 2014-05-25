@@ -6,6 +6,7 @@
 #include <sndfile.hh>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 using namespace std;
 
@@ -21,6 +22,7 @@ namespace Ael {
 	public:
 		AelFrame(int);
 		AelFrame(int*, int);
+		int getChannels();
 		int& operator[](int);
 		~AelFrame();
 	};
@@ -30,8 +32,8 @@ namespace Ael {
 
 	class AelAudioStream
 	{
-		int *m_panStream;
-		int *currPosition;
+		vector<int> m_panStream;
+		int currPosition;
 		int m_nframes;
 		char channels;
 		int peek;
@@ -39,8 +41,10 @@ namespace Ael {
 
 	public:
 		AelAudioStream(string);
+		AelAudioStream(int nChannels, int nSampleRate = 44100);
 		AelAudioStream(int nChannels, int nFrames, int nSampleRate = 44100);
-		int getframes() { return m_nframes; }
+		bool AddFrames(AelFrame&);
+		int getnframes() { return m_nframes; }
 		int getchannels(){ return channels; }
 		int getpeek() { return peek; }
 		int getsampleRate() { return sampleRate; }
