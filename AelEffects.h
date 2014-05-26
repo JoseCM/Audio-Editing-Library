@@ -2,7 +2,7 @@
 #define __AEL_EFFECTS__
 
 #include <string>
-#include <AelAudioBuf.h>
+#include "AelAudioBuf.h"
 
 using namespace std;
 
@@ -12,7 +12,7 @@ enum MOD { OFF, ON };
 
 namespace Ael {
 
-	class AelEffects{
+	class AelEffect{
 	private:	
 		string effectName;
 		int sampleRate;
@@ -20,9 +20,9 @@ namespace Ael {
 		//CALOU TOU A TRABALHAR FODASSE! QUE DESRESPEITO BRUTAL PARA AS MINHAS 4h DE TRABALHO INTENSIVO DE ESCRITA.
 		//IDE PARA AQUI IDE PO CARALHO!!
 	public:
-		AelEffects(string name, int sampleR) : effectName(name),sampleRate(sampleR) {}
+		AelEffect(string name, int sampleR) : effectName(name),sampleRate(sampleR) {}
 		string getEffectName() { return effectName; }
-		int setSampleRate(int sr) { sampleRate = sr; } // melhorar atribuicao
+		void setSampleRate(int sr) { sampleRate = sr; } // melhorar atribuicao
 		int getSampleRate() { return sampleRate; }
 		virtual AelFrame& processFrame(AelFrame&) = 0; // Nao altera original
 		MOD getMod() { return mod; }

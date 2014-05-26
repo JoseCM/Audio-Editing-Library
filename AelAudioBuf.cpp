@@ -2,7 +2,7 @@
 #include "sndfile.hh"
 #include <cmath>
 #include <iostream>
-#include <AelException.h>
+#include "AelException.h"
 
 #define STREAM_LEN  ((m_nframes) * (channels))
 

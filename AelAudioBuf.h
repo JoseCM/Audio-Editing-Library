@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <sndfile.hh>
+#include "sndfile.hh"
 #include <iostream>
 #include <stdexcept>
 #include <vector>
