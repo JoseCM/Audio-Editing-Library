@@ -7,7 +7,7 @@
 //
 
 #include "AelDynamicEffect.h"
-#include "math.h"
+#include "cmath"
 
 namespace Ael {
 
@@ -15,12 +15,23 @@ namespace Ael {
     
     void Volume::setVolume(double vol) {
         
-        if(vol > 2.0) return;
+        if(vol > 2.0 || vol == 0) return;
+        
+        this->volume = vol;
+    }
+    
+    double Volume::getVolumeDb(){
+        
+        if(volume == 0) return
         
     }
     
-    double Volume::getVolumeDb();
-    void Volume::setVolumeDb(double);
+    void Volume::setVolumeDb(double voldb){
+        
+        
+        
+        
+    }
 
     AelFrame& Volume::processFrame(AelFrame&);
     AelAudioStream& Volume::processStream(AelAudioStream &);
