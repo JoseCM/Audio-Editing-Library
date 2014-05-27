@@ -1,4 +1,3 @@
 AelException (classe base)
 FailCreateStream
 NoMoreSamples
-naointeressa para nada
