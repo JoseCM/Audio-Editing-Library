@@ -26,18 +26,21 @@ namespace Ael {
     
     
     
-    class VolumeGain : public AelDynamicEffect {
+    class Volume : public AelDynamicEffect {
         
     private:
-        double volumeGain;
+        double volume;
         
     
     public:
-        VolumeGain(double gain = 0.5) : volumeGain(gain) { }
-        double getGain();
-        void setGain(double);
+        Volume(double gain = 0.5) : volume(gain) { }
+        double getVolume();
+        void setVolume(double);
+        double getVolumeDb();
+        void setVolumeDb(double);
         
-        
+        AelFrame& processFrame(AelFrame&);
+        AelAudioStream& processStream(AelAudioStream &);
     };
     
     
