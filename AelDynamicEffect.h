@@ -28,8 +28,14 @@ namespace Ael {
     
     class VolumeGain : public AelDynamicEffect {
         
+    private:
+        double volumeGain;
         
-        
+    
+    public:
+        VolumeGain(double gain = 0.5) : volumeGain(gain) { }
+        double getGain();
+        void setGain(double);
         
         
     };
