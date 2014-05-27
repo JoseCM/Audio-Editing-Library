@@ -1,4 +1,8 @@
 AelException (classe base)
 FailCreateStream
 NoMoreSamples
+<<<<<<< HEAD
 adicionei OUTRA linha
+=======
+adicionei uma linha
+>>>>>>> fd0b1d4a60b236585dc8cb6583a0ff6ecc671caa
