@@ -21,9 +21,11 @@ namespace Ael {
 
 	public:
 		AelFrame(int);
+        AelFrame(const AelFrame&);
 		AelFrame(int*, int);
 		int getChannels();
 		int& operator[](int);
+        int& operator[](int) const;
 		~AelFrame();
 	};
 

@@ -116,9 +116,18 @@ namespace Ael{
 		for (int i = 0; i < n_channels; i++){
 			samples[i] = arr[i];
 		}
+        
 	}
-
+    
+    AelFrame::AelFrame(const AelFrame &source): samples(new int[source.n_channels]), n_channels(source.n_channels){
+        
+        for(int i = 0; i < n_channels; i++)
+            samples[i] = source[i];
+        
+    }
+    
 	int AelFrame::getChannels() { return n_channels; }
+    
 	int& AelFrame::operator[](int i) {
 
 		if (i<0 || i>n_channels)
@@ -127,6 +136,15 @@ namespace Ael{
 			return samples[i];
 	}
 
+    int& AelFrame::operator[](int i) const{
+        
+        if (i<0 || i>n_channels)
+			throw AelExecption("index out of range");
+		else
+			return samples[i];
+        
+    }
+    
 	AelFrame::~AelFrame(){}
 	//////////////////////////////////////////////
 }
