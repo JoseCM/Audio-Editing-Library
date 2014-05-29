@@ -43,7 +43,13 @@ namespace Ael {
         AelAudioStream& processStream(AelAudioStream &);
     };
     
-    
+    class Panner : public AelDynamicEffect {
+        
+        
+        
+        
+        
+    };
     
 }
 
