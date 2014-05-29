@@ -23,8 +23,7 @@ namespace Ael {
         
         
     };
-    
-    
+
     
     class Volume : public AelDynamicEffect {
         
