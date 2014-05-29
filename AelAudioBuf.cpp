@@ -146,6 +146,8 @@ namespace Ael{
         
     }
     
-	AelFrame::~AelFrame(){}
+	AelFrame::~AelFrame(){
+        
+    }
 	//////////////////////////////////////////////
 }
