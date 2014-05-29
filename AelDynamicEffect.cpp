@@ -37,9 +37,9 @@ namespace Ael {
         
     }
 
-    AelFrame& Volume::processFrame(AelFrame& frame){
+    AelFrame Volume::processFrame(AelFrame frame){
         
-        AelFrame *temp = new AelFrame(frame.getChannels());
+        AelFrame temp(frame.getChannels());
         long int tempsample = 0;
         
         for(int i = 0; i < frame.getChannels(); i++){
@@ -49,16 +49,16 @@ namespace Ael {
             tempsample = frame[i] * volume;
             
             if(abs(tempsample <= MAX_SAMPLE_VALUE))
-                (*temp)[i] = static_cast<int>(tempsample);
+                temp[i] = static_cast<int>(tempsample);
             
             else if(frame[i] < 0)
-                (*temp)[i] = - MAX_SAMPLE_VALUE;
+                 temp[i] = - MAX_SAMPLE_VALUE;
             
             else
-                (*temp)[i] = MAX_SAMPLE_VALUE;
+                temp[i]= MAX_SAMPLE_VALUE;
         }
         
-        return *temp;
+        return temp;
     }
     
     
@@ -68,7 +68,9 @@ namespace Ael {
         
         for(int i = 0; i < stream.getnframes(); i++){
             
-            temp->AddFrames(processFrame(stream.getNextFrame()));
+            AelFrame frame = processFrame(stream.getNextFrame());
+            
+            temp->AddFrames(frame);
             
         }
         

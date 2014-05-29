@@ -52,6 +52,7 @@ namespace Ael{
 	AelAudioStream::AelAudioStream(int nChannels, int nSampleRate) : currPosition(0), channels(nChannels), sampleRate(nSampleRate), peek(0), m_nframes(0){}
 
 	bool AelAudioStream::AddFrames(AelFrame& new_frame){
+        
 		if (new_frame.getChannels() != channels){
 			return false;
 		}
@@ -90,18 +91,18 @@ namespace Ael{
 	}
 
 
-	AelFrame& AelAudioStream::getNextFrame(){
+	AelFrame AelAudioStream::getNextFrame(){
 
 		if (STREAM_LEN <= currPosition){
 			throw AelExecption("No more Frames");
 		}
 		
-        AelFrame* new_frame = new AelFrame(channels);
+        AelFrame new_frame(channels);
             
         for (int i = 0; i < channels; i++)
-            (*new_frame)[i] = m_panStream.at(currPosition++);
+            new_frame[i] = m_panStream.at(currPosition++);
             
-        return *new_frame;
+        return new_frame;
 		
 	}
 
@@ -147,7 +148,7 @@ namespace Ael{
     }
     
 	AelFrame::~AelFrame(){
-        
+        delete[] samples;
     }
 	//////////////////////////////////////////////
 }

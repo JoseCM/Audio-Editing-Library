@@ -15,11 +15,9 @@
 namespace Ael {
     
     class AelDynamicEffect : public AelEffect {
+
         
-        
-        
-        
-    public:
+        public:
         
         
     };
@@ -38,7 +36,7 @@ namespace Ael {
         double getVolumeDb();
         void setVolumeDb(double);
         
-        AelFrame& processFrame(AelFrame&);
+        AelFrame processFrame(AelFrame);
         AelAudioStream& processStream(AelAudioStream &);
     };
     

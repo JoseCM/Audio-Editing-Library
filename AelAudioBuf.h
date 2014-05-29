@@ -50,7 +50,7 @@ namespace Ael {
 		int getchannels(){ return channels; }
 		int getpeek() { return peek; }
 		int getsampleRate() { return sampleRate; }
-		AelFrame& getNextFrame();
+		AelFrame getNextFrame();
 		void SaveToFile(string);
 		virtual ~AelAudioStream();
 		
