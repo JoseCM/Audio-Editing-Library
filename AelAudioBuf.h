@@ -25,7 +25,7 @@ namespace Ael {
 		AelFrame(int*, int);
 		int getChannels();
 		int& operator[](int);
-        int& operator[](int) const;
+        int operator[](int) const;
 		~AelFrame();
 	};
 
@@ -37,7 +37,7 @@ namespace Ael {
 		vector<int> m_panStream;
 		int currPosition;
 		int m_nframes;
-		char channels;
+		int channels;
 		int peek;
 		int sampleRate;
 

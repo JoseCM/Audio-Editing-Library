@@ -49,8 +49,7 @@ namespace Ael{
 		}
 	}
 
-	AelAudioStream::AelAudioStream(int nChannels, int nSampleRate) : currPosition(0), channels(nChannels),
-	sampleRate(nSampleRate), peek(0), m_nframes(0){}
+	AelAudioStream::AelAudioStream(int nChannels, int nSampleRate) : currPosition(0), channels(nChannels), sampleRate(nSampleRate), peek(0), m_nframes(0){}
 
 	bool AelAudioStream::AddFrames(AelFrame& new_frame){
 		if (new_frame.getChannels() != channels){
@@ -67,6 +66,7 @@ namespace Ael{
 	}
 
 	void AelAudioStream::SaveToFile(string file_name){
+        
 		int* aux_vector;
 
 		try{
@@ -80,7 +80,9 @@ namespace Ael{
 			file.write(aux_vector, STREAM_LEN);
 
 			delete [] aux_vector;
+            
 		}
+        
 		catch (bad_alloc& err){
 			throw AelExecption("Allocating Error");
 		}
@@ -93,24 +95,23 @@ namespace Ael{
 		if (STREAM_LEN <= currPosition){
 			throw AelExecption("No more Frames");
 		}
-		else {
-			AelFrame* new_frame = new AelFrame(channels);
-			for (int i = 0; i < channels; i++)
-				new_frame[i] = m_panStream[currPosition++];
-			return *new_frame;
-		}
-
+		
+        AelFrame* new_frame = new AelFrame(channels);
+            
+        for (int i = 0; i < channels; i++)
+            (*new_frame)[i] = m_panStream.at(currPosition++);
+            
+        return *new_frame;
+		
 	}
 
 	AelAudioStream::~AelAudioStream() {}
-	//////////////////////////////////////////////
-
-
-
+    
 	//////////////////////////////////////////////
 	// AELFRAME
 
-	AelFrame::AelFrame(int n_ch) : samples(new int[n_ch]), n_channels(n_ch) {};
+	AelFrame::AelFrame(int n_ch) : samples(new int[n_ch]), n_channels(n_ch) {}
+    
 	AelFrame::AelFrame(int* arr, int n_ch) : samples(new int[n_ch]), n_channels(n_ch) {
 
 		for (int i = 0; i < n_channels; i++){
@@ -130,15 +131,15 @@ namespace Ael{
     
 	int& AelFrame::operator[](int i) {
 
-		if (i<0 || i>n_channels)
+		if (i < 0 || i > n_channels)
 			throw AelExecption("index out of range");
 		else
 			return samples[i];
 	}
 
-    int& AelFrame::operator[](int i) const{
+    int AelFrame::operator[](int i) const{
         
-        if (i<0 || i>n_channels)
+        if (i < 0 || i > n_channels)
 			throw AelExecption("index out of range");
 		else
 			return samples[i];
