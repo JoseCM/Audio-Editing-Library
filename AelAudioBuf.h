@@ -27,6 +27,7 @@ namespace Ael {
 		int getChannels();
 		int& operator[](int);
         int operator[](int) const;
+        void toStereo();
 		~AelFrame();
         
         friend class AelAudioStream;

@@ -75,18 +75,17 @@ namespace Ael {
         
         for(int i = 0; i < stream.getnframes(); i++){
             AelFrame aux = stream.getNextFrame();
-            aux = processFrame(aux);
+            aux = this->processFrame(aux);
             temp->AddFrames(aux);
             
         }
-        
         
         return *temp;
         
     }
     
     //AELPANNING
-    /*
+    //SÓ TEM SUPORTE PARA MONO E STEREO
     double AelPanner::getPan(){
         return pan;
     }
@@ -102,8 +101,34 @@ namespace Ael {
         
     }
     
-    */
+    AelFrame& AelPanner::processFrame(AelFrame &frame){
+        
+        if(frame.getChannels() > 2)
+            return frame;
+        
+        frame.toStereo();
+        
+        frame[0] *= panleft;
+        frame[1] *= panleft;
+        
+        return frame;
+    }
     
+    AelAudioStream& AelPanner::processStream(AelAudioStream &stream){
+        
+        
+        AelAudioStream *temp = new AelAudioStream(stream.getchannels());
+        
+        for(int i = 0; i < stream.getnframes(); i++){
+            AelFrame aux = stream.getNextFrame();
+            aux = this->processFrame(aux);
+            temp->AddFrames(aux);
+            
+        }
+        
+        return *temp;
+        
+    }
     
     
 }
