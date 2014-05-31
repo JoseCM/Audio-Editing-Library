@@ -1,43 +1,47 @@
 //
-//  AelDynamicEffect.cpp
-//  Audio Editing Library
+//  AelMixer.cpp
+//  AudioEditingLibrary
 //
-//  Created by José Martins on 23/05/14.
+//  Created by José Martins on 31/05/14.
 //  Copyright (c) 2014 José Martins. All rights reserved.
 //
 
-#include "AelDynamicEffect.h"
+#include "AelMixer.h"
 #include <cmath>
 
 #define MAX_SAMPLE_VALUE ( (pow(2.0, 32.0)/2) - 1 )
 
 namespace Ael {
-
-    double Volume::getVolume() { return volume; }
     
-    void Volume::setVolume(double vol) {
+    
+    
+    //AEL VOLUME
+    
+    double AelVolume::getVolume() { return volume; }
+    
+    void AelVolume::setVolume(double vol) {
         
         if(vol > 2.0 || vol < 0) return;
         
         this->volume = vol;
     }
     
-    double Volume::getVolumeDb(){
+    double AelVolume::getVolumeDb(){
         
         if(volume == 0) return -70.0;
         
         else return 20.0 * log(volume);
     }
     
-    void Volume::setVolumeDb(double voldb){
+    void AelVolume::setVolumeDb(double voldb){
         
         if(voldb > 6 || voldb < 70) return;
         
         volume = pow(10, voldb/20);
         
     }
-
-    AelFrame& Volume::processFrame(AelFrame& frame){
+    
+    AelFrame& AelVolume::processFrame(AelFrame& frame){
         
         long int tempsample = 0;
         
@@ -63,7 +67,9 @@ namespace Ael {
     }
     
     
-    AelAudioStream& Volume::processStream(AelAudioStream &stream){
+    
+    
+    AelAudioStream& AelVolume::processStream(AelAudioStream &stream){
         
         AelAudioStream *temp = new AelAudioStream(stream.getchannels());
         
@@ -78,5 +84,26 @@ namespace Ael {
         return *temp;
         
     }
-
+    
+    //AELPANNING
+    /*
+    double AelPanner::getPan(){
+        return pan;
+    }
+    
+    void AelPanner::setPan(double pan){
+        
+        if(pan < -1 || pan > -1)
+            return;
+        
+        this->pan = pan;
+        panright = (1 + pan) / 2.0;
+        panleft = (1 - pan) / 2.0;
+        
+    }
+    
+    */
+    
+    
+    
 }
