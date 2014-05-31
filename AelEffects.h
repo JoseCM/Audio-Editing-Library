@@ -25,8 +25,8 @@ namespace Ael {
 		int getId() { return effectId; }
 		void setSampleRate(int sr) { sampleRate = sr; } // melhorar atribuicao
 		int getSampleRate() { return sampleRate; }
-		virtual AelFrame processFrame(AelFrame) = 0; // Nao altera original
-        virtual AelAudioStream& processStream(AelAudioStream &) = 0;
+		virtual AelFrame& processFrame(AelFrame&) = 0; // retorna a propria frame processada
+        virtual AelAudioStream& processStream(AelAudioStream &) = 0; // retorna a propria frame processada
 		MOD getMod() { return mod; }
 		void m_turnOn(){ mod = ON; }
 		void m_turnOff() { mod = OFF; }
