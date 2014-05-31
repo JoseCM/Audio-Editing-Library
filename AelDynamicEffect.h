@@ -15,22 +15,17 @@
 namespace Ael {
     
     class AelDynamicEffect : public AelEffect {
-        
-        
-        
-        
-    public:
+
+        public:
         
         
     };
-    
-    
+
     
     class Volume : public AelDynamicEffect {
         
     private:
         double volume;
-        
     
     public:
         Volume(double gain = 0.5) : volume(gain) { }
@@ -43,7 +38,13 @@ namespace Ael {
         AelAudioStream& processStream(AelAudioStream &);
     };
     
-    
+    class Panner : public AelDynamicEffect {
+        
+        
+        
+        
+        
+    };
     
 }
 

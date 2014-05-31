@@ -5,6 +5,7 @@
 
 #include "sndfile.hh"
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 #include <vector>
 
@@ -21,21 +22,30 @@ namespace Ael {
 
 	public:
 		AelFrame(int);
+        AelFrame(const AelFrame&);
 		AelFrame(int*, int);
 		int getChannels();
 		int& operator[](int);
+        int operator[](int) const;
 		~AelFrame();
+        
+        friend class AelAudioStream;
 	};
 
 //////////////////////////////////////////////
 // AUDIO BUFFER 
 
+    
 	class AelAudioStream
 	{
-		vector<int> m_panStream;
+        
+        static int ID;
+		//vector<int> m_panStream;
+        fstream audioFstream;
+        int streamID;
 		int currPosition;
 		int m_nframes;
-		char channels;
+		int channels;
 		int peek;
 		int sampleRate;
 
@@ -48,7 +58,7 @@ namespace Ael {
 		int getchannels(){ return channels; }
 		int getpeek() { return peek; }
 		int getsampleRate() { return sampleRate; }
-		AelFrame& getNextFrame();
+		AelFrame getNextFrame();
 		void SaveToFile(string);
 		virtual ~AelAudioStream();
 		
