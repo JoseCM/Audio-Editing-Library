@@ -1,4 +1,4 @@
 AelException (classe base)
 FailCreateStream
 NoMoreSamples
-adicionei uma OUTRA linha
+ChannelFormat / SampleRate / File type not supported -> a biblioteca pela menos na fase inicial só devereia suportar ficheiros mono ou stereo e com 44100 de sample rate. Senao complica muitos dos algoritmos. Quem ler isto que diga o que acha...
