@@ -86,7 +86,7 @@ namespace Ael {
     }
     
     //AELPANNING
-    
+    /*
     double AelPanner::getPan(){
         return pan;
     }
@@ -102,8 +102,7 @@ namespace Ael {
         
     }
     
-    AelFrame& processFrame(AelFrame&);
-    AelAudioStream& processStream(AelAudioStream &);
+    */
     
     
     

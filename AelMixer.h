@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include "AelAudioBuf.h"
-#include "AelEffects.cpp"
+#include "AelEffects.h"
 
 namespace Ael {
     
@@ -32,6 +32,7 @@ namespace Ael {
         AelAudioStream& processStream(AelAudioStream &);
     };
 
+    /*
     class AelPanner : public AelEffect {
         
     private:
@@ -44,12 +45,10 @@ namespace Ael {
         double getPan();
         void setPan(double);
         
-        AelFrame& processFrame(AelFrame&);
-        AelAudioStream& processStream(AelAudioStream &);
         
         
     };
-    
+    */
     
 }
 

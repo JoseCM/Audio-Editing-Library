@@ -131,13 +131,7 @@ namespace Ael{
     
         audioFstream.close();
         
-        
-        if(remove(to_string(streamID).c_str())){ //ATENÇAO COLOCAR PROTEÇOES
-            cout << "nao foi possivel apagar o ficheiro " << to_string(streamID).c_str() << endl;
-        }
-        else
-            cout << "ficheiro aoagado com sucesso " << to_string(streamID).c_str() << endl;
-        
+        remove(to_string(streamID).c_str());
         
     }
     

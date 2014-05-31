@@ -7,5 +7,4 @@
 //
 
 #include "AelDynamicEffect.h"
-#include <cmath>
 
