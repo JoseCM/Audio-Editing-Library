@@ -179,6 +179,24 @@ namespace Ael{
         
     }
     
+    void AelFrame::toStereo(){
+        
+        if(n_channels >= 2 || n_channels <= 0)
+            return;
+        
+        int tempsample = samples[0];
+        
+        delete[] samples;
+        
+        samples = new int[2];
+        
+        for(int i = 0; i < 2; i++)
+            samples[i] = tempsample;
+        
+        n_channels = 2;
+        
+    }
+    
 	AelFrame::~AelFrame(){
         delete[] samples;
     }
