@@ -30,6 +30,7 @@ namespace Ael {
 		MOD getMod() { return mod; }
 		void m_turnOn(){ mod = ON; }
 		void m_turnOff() { mod = OFF; }
+        virtual ~AelEffect() { }
 	};
 
 

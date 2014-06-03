@@ -10,6 +10,7 @@
 #define __AudioEditingLibrary__AelMixer__
 
 #include <iostream>
+#include <list>
 #include "AelAudioBuf.h"
 #include "AelEffects.h"
 
@@ -50,7 +51,21 @@ namespace Ael {
 
     };
 
-    
+    class AelChannel {
+        
+        AelVolume volume;
+        AelPanner panner;
+        AelAudioStream stream;
+        list<AelEffect*> effectChain;
+        
+    public:
+        AelChannel();
+        void setVolume();
+        void setPan();
+        
+        
+        
+    };
     
 }
 
