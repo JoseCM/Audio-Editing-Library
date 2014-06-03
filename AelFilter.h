@@ -16,7 +16,7 @@
 
 namespace Ael {
     
-    class AelFilter : public AelEffect  {
+    class AelFilter : public AelEffect {
     protected:
         vector<float> a, b;
         vector<float> in_, out_;
