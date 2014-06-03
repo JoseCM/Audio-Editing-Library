@@ -22,30 +22,6 @@ namespace Ael {
     };
 
     
-    class Volume : public AelDynamicEffect {
-        
-    private:
-        double volume;
-    
-    public:
-        Volume(double gain = 0.5) : volume(gain) { }
-        double getVolume();
-        void setVolume(double);
-        double getVolumeDb();
-        void setVolumeDb(double);
-        
-        AelFrame& processFrame(AelFrame&);
-        AelAudioStream& processStream(AelAudioStream &);
-    };
-    
-    class Panner : public AelDynamicEffect {
-        
-        
-        
-        
-        
-    };
-    
 }
 
 
