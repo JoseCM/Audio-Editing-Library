@@ -92,12 +92,12 @@ namespace Ael {
     
     void AelPanner::setPan(double pan){
         
-        if(pan < -1 || pan > -1)
+        if(pan < -1.0 || pan > 1.0)
             return;
         
         this->pan = pan;
-        panright = (1 + pan) / 2.0;
-        panleft = (1 - pan) / 2.0;
+        panright = (sin((1 + pan) / 2.0 * M_PI / 2.0));
+        panleft =  (sin((1 - pan) / 2.0 * M_PI / 2.0));
         
     }
     
@@ -109,7 +109,7 @@ namespace Ael {
         frame.toStereo();
         
         frame[0] *= panleft;
-        frame[1] *= panleft;
+        frame[1] *= panright;
         
         return frame;
     }

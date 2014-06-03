@@ -49,6 +49,7 @@ namespace Ael {
         AelAudioStream& processStream(AelAudioStream &);
 
     };
+
     
     
 }
