@@ -61,6 +61,8 @@ namespace Ael {
 		int getsampleRate() { return sampleRate; }
 		AelFrame getNextFrame();
 		void SaveToFile(string);
+        //void toStereo();
+        //void toMono();
 		virtual ~AelAudioStream();
 		
 	};

@@ -22,7 +22,7 @@ namespace Ael {
         vector<float> in_, out_;
         float gain, cutoff;
     public:
-        AelFilter(int =44100, float =1.0, float =1.0);
+        AelFilter(int = 44100, float = 1.0, float = 1.0);
         virtual ~AelFilter() {    }
         void set_cutoff(float cutoff) { this->cutoff = cutoff; }
         void set_gain(float gain) { this->gain = gain; }
