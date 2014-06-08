@@ -11,13 +11,14 @@
 
 namespace Ael {
 
-AelFilter::AelFilter(int sampleR, float gain_, float cutoff_)
-    : AelEffect(sampleR), gain(gain_), cutoff(cutoff_) {
-    a.assign(2, 0.0);
-    b.assign(3, 0.0);
-    a[0] = b[0] = 1.0;
-    in_.assign(3, 0.0), out_.assign(3, 0.0);
-}
+    AelFilter::AelFilter(int sampleR, float gain_, float cutoff_, int n_coefa, int n_coefb) : AelEffect(sampleR), gain(gain_), cutoff(cutoff_) {
+    
+    coef_a.assign(n_coefa, 0.0);
+    coef_b.assign(n_coefb, 0.0);
+    
+    }
+    
+    
 
 
 }
