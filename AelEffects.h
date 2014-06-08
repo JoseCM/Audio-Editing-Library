@@ -8,7 +8,6 @@ using namespace std;
 
 //////////////////////////////////////////////
 // AUDIO EFFECTS
-enum MOD { OFF, ON };
 
 namespace Ael {
 
@@ -18,7 +17,7 @@ namespace Ael {
         const int effectId;
 		string effectName;
 		int sampleRate;
-		MOD mod;
+		bool onoff;
 		
 	public:
 		AelEffect(int sampleR = 44100) : sampleRate(sampleR) , effectId(ID++) {}
@@ -27,9 +26,9 @@ namespace Ael {
 		int getSampleRate() { return sampleRate; }
 		virtual AelFrame& processFrame(AelFrame&) = 0; // retorna a propria frame processada
         virtual AelAudioStream& processStream(AelAudioStream &) = 0; // retorna a propria frame processada
-		MOD getMod() { return mod; }
-		void m_turnOn(){ mod = ON; }
-		void m_turnOff() { mod = OFF; }
+		bool isOn() { return onoff; }
+		void m_turnOn(){ onoff = true; }
+		void m_turnOff() { onoff = false; }
         virtual ~AelEffect() { }
 	};
 
