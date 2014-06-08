@@ -20,6 +20,7 @@ namespace Ael {
         vector<float> coef_a, coef_b;
         float gain, cutoff;
     public:
+        AelFilter(int = 44100, float = 1.0, float = 1.0);
         AelFilter(int =44100, float =1.0, float =1.0, int =1, int =1);
         virtual ~AelFilter() {    }
         void set_cutoff(float cutoff) { this->cutoff = cutoff; }
