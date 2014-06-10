@@ -11,36 +11,36 @@
 
 namespace Ael{
     void AelIIR::set_LPF(){
-       
-        float cos_ = cos(2*pi*cutoff/getSampleRate());
-        coef_b[0] =  sqrt( pow( (2 - cos_) , 2) - 1 ) - 2 + cos_;
-        coef_a[0] = 1 + coef_b[0];
-        std::cout << coef_a[0] << " " << coef_b[0] << endl;
+        
+        double x = exp(-2*pi * (cutoff/getSampleRate()));
+        coef_a[0] = 1.0 - x;
+        coef_a[1] = 0.0;
+        coef_b[0] = x;
     }
     
     void AelIIR::set_HPF(){
         
-        float cos_ = cos(2*pi*cutoff/getSampleRate());
-        coef_b[0] = 2 - cos_ - sqrt( pow( (2 - cos_) , 2) - 1 );
-        coef_a[0] = 1 - coef_b[0];
-        std::cout << coef_a[0] << " " << coef_b[0] << endl;
+        double x = exp(-2*pi * (cutoff/getSampleRate()));
+        coef_a[0]= ((1.0 + x) / 2.0);
+        coef_a[1] = -coef_a[0];
+        coef_b[0] = x;
     
     }
     
     AelFrame& AelIIR::processFrame(AelFrame& Frame){
-    
-        //y(n) = ax(n) - b y(n - 1).
+        //y[n] = a0 * x[n] + a1 * x[n-1] + b1 * y[n-1]
         
+        AelFrame aux = Frame;
         for(int i = 0; i < Frame.getChannels() ; i++){
-            Frame[i] = gain * ( (coef_a[0] * Frame[i]) - (coef_b[0] * out_1[i]) );
+            aux[i] = Frame[i];
+            Frame[i] = gain * ((Frame[i] * coef_a[0]) + (in_1[i] * coef_a[1]) + (out_1[i] * coef_b[0]));
             out_1[i] = Frame[i];
+            in_1[i] = aux[i];
         }
-    
         return Frame;
     }
     
     AelAudioStream& AelIIR::processStream(AelAudioStream &Stream){
-        out_1[0] = out_1[1] = 0;
         
         AelAudioStream *temp = new AelAudioStream(Stream.getchannels());
         
@@ -53,24 +53,4 @@ namespace Ael{
         return *temp;
     
     }
-    
-    /*
-    void AelIIR::CalcCoef(int hp)
-	{
-		double x = exp(-2*pi * (cutoff/getSampleRate()));
-		if (hp)
-		{
-			coef_a[0]= x;
-			coef_b[0] = 1.0 - x;
-		}
-		else
-		{
-			coef_a[0] = 1.0 - x;
-			coef_b[0] = -x;
-		}
-	}
-     */
-    
-     
-    
 }

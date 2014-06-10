@@ -24,7 +24,7 @@ namespace Ael{
         virtual AelAudioStream& processStream(AelAudioStream &);
         virtual void set_LPF();
         virtual void set_HPF();
-        virtual void set_NOTCH(float);
+        void set_NOTCH(float);
     };
     
 }

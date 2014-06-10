@@ -26,15 +26,10 @@ namespace Ael {
         void set_cutoff(float cutoff) { this->cutoff = cutoff; }
         void set_gain(float gain) { this->gain = gain; }
         
-        virtual AelFrame& processFrame(AelFrame&) = 0; // retorna a propria frame processada
-        virtual AelAudioStream& processStream(AelAudioStream &) = 0; // retorna a propria frame processada
+        virtual AelFrame& processFrame(AelFrame&) = 0;
+        virtual AelAudioStream& processStream(AelAudioStream &) = 0;
         virtual void set_LPF() = 0;
         virtual void set_HPF() = 0;
-        virtual void set_NOTCH(float) = 0;
-        
-        //virtual void set_BPF() = 0;
-        //virtual void set_APF() = 0;
-    
     };
 }
 
