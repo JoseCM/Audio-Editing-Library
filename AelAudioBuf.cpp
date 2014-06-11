@@ -137,7 +137,7 @@ namespace Ael{
             cout << "nao foi possivel apagar o ficheiro " << to_string(streamID).c_str() << endl;
         }
         else
-            cout << "ficheiro aoagado com sucesso " << to_string(streamID).c_str() << endl;
+            cout << "ficheiro apagado com sucesso " << to_string(streamID).c_str() << endl;
         
         
     }
