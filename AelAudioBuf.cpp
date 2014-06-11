@@ -1,10 +1,11 @@
+
+#include <iostream>
+#include <cmath>
 #include "AelAudioBuf.h"
 #include "sndfile.hh"
-#include <cmath>
-#include <iostream>
 #include "AelException.h"
+#include "defines.h"
 
-#define STREAM_LEN  ((m_nframes) * (channels))
 
 namespace Ael{
 
@@ -200,6 +201,34 @@ namespace Ael{
             samples[i] = tempsample;
         
         n_channels = 2;
+        
+    }
+    
+    AelFrame AelFrame::operator+(const AelFrame& to) const{
+        
+        if(this->n_channels != to.n_channels)
+            throw exception();
+        
+        AelFrame frame(n_channels);
+        long int tempsample;
+        
+        
+        for(int i = 0; i < n_channels; i++){
+            
+            tempsample = (*this)[i] + to[i];
+            
+            if(abs(tempsample) <= MAX_SAMPLE_VALUE)
+                frame[i] = static_cast<int>(tempsample);
+            
+            else if(frame[i] < 0)
+                frame[i] = - MAX_SAMPLE_VALUE;
+            
+            else
+                frame[i] = MAX_SAMPLE_VALUE;
+            
+        }
+        
+        return frame;
         
     }
     

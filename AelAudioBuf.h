@@ -28,6 +28,7 @@ namespace Ael {
 		int& operator[](int);
         int operator[](int) const;
         void toStereo();
+        AelFrame operator+(const AelFrame&) const;
 		~AelFrame();
         
         friend class AelAudioStream;

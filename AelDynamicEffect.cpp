@@ -9,7 +9,7 @@
 #include "AelDynamicEffect.h"
 #include <cmath>
 
-#define MAX_SAMPLE_VALUE ( (pow(2.0, 32.0)/2) - 1 )
+
 
 namespace Ael {
 
