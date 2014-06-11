@@ -224,9 +224,17 @@ namespace Ael {
     AelAudioStream* AelMixer::getFullMix(){
         
         AelAudioStream *fullmix = new AelAudioStream(2);
+        AelFrame tempframe(2);
+        bool flag = false;
+        
+        for(AelChannel* &channel : channel_list){
+            if(!channel->stream.isEOS()){
+                
+            }
+        }
         
         
-        
+        return fullmix;
     }
     
     

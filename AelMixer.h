@@ -53,6 +53,8 @@ namespace Ael {
     
     class AelChannel {
         
+        friend class AelMixer;
+        
         const int channel_ID;
         string name;
         AelVolume volume;
