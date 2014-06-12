@@ -113,7 +113,7 @@ namespace Ael{
 
 	AelFrame AelAudioStream::getNextFrame(){
 
-		if (STREAM_LEN <= currPosition){
+		if (m_nframes == currPosition){
 			//throw AelExecption("No more Frames");
             return AelFrame(channels);
 		}
@@ -125,7 +125,7 @@ namespace Ael{
         
         audioFstream.read(reinterpret_cast<char*>(new_frame.samples), sizeof(int) * new_frame.n_channels);
         
-        if(++currPosition == STREAM_LEN)
+        if(++currPosition == m_nframes)
             eos = true;
             
         return new_frame;

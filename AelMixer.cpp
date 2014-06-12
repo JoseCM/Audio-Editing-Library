@@ -104,6 +104,7 @@ namespace Ael {
         if(frame.getChannels() > 2)
             return frame;
         
+        
         frame.toStereo();
         
         frame[0] *= panleft;
@@ -145,6 +146,9 @@ namespace Ael {
     
     AelFrame AelChannel::getNextFrame(){
         
+        if(eoc == true)
+            return AelFrame(stream.getchannels());
+        
         AelFrame frame = stream.getNextFrame();
         
         for( AelEffect* &effect : effectChain )
@@ -153,6 +157,9 @@ namespace Ael {
         
         panner.processFrame(frame);
         volume.processFrame(frame);
+        
+        if(stream.isEOS())
+            eoc = true;
         
         return frame;
         
@@ -210,7 +217,7 @@ namespace Ael {
         AelFrame new_frame(2);
         
         for(AelChannel* &channel : channel_list){
-            if(channel->isOn())
+            if((!channel->isEOC()) && channel->isOn())
                 new_frame = new_frame + channel->getNextFrame();
         }
         
@@ -224,15 +231,24 @@ namespace Ael {
     AelAudioStream* AelMixer::getFullMix(){
         
         AelAudioStream *fullmix = new AelAudioStream(2);
-        AelFrame tempframe(2);
-        bool flag = false;
         
-        for(AelChannel* &channel : channel_list){
-            if(!channel->stream.isEOS()){
-                
+        bool endflag = false;
+        
+        while(!endflag){
+            
+            endflag = true;
+            AelFrame tempframe(2);
+            
+            for(AelChannel* &channel : channel_list){
+                if(!(channel->isEOC())){
+                    tempframe = tempframe + channel->getNextFrame();
+                    endflag = false;
+                }
             }
+            
+            if(!endflag)
+                fullmix->AddFrames(tempframe);
         }
-        
         
         return fullmix;
     }

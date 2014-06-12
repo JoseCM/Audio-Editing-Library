@@ -62,12 +62,13 @@ namespace Ael {
         AelAudioStream stream;
         list<AelEffect*> effectChain;
         bool onoff;
+        bool eoc;
         
         
     public:
         
-        AelChannel(const string &fileName, int ID) : stream(fileName), volume(0), panner(0), onoff(true), name(fileName),
-        channel_ID(ID){ }
+        AelChannel(const string &fileName, int ID) : stream(fileName), volume(0.5), panner(0), onoff(true), name(fileName),
+        channel_ID(ID), eoc(false) { }
         void setVolumeDb(double volDb) { volume.setVolumeDb(volDb); }
         void setPan(double pan){ panner.setPan(pan); }
         double getVolumeDb() { return volume.getVolume(); }
@@ -80,6 +81,7 @@ namespace Ael {
         void setName(string newname) { name = newname; }
         void addEffect(AelEffect &effect) { effectChain.push_back(&effect); }
         AelFrame getNextFrame();
+        bool isEOC(){ return eoc; }
         
     };
     
