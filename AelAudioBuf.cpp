@@ -247,6 +247,17 @@ namespace Ael{
         return frame;
         
     }
+
+	AelFrame AelFrame::operator*(float gain) const{
+		
+		AelFrame frame(n_channels);
+
+		for (int i = 0; i < n_channels; i++){
+			frame[i] = (*this)[i] * gain;
+		}
+
+		return frame;
+	}
     
 	AelFrame::~AelFrame(){
         delete[] samples;
