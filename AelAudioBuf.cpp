@@ -1,10 +1,11 @@
+
+#include <iostream>
+#include <cmath>
 #include "AelAudioBuf.h"
 #include "sndfile.hh"
-#include <cmath>
-#include <iostream>
 #include "AelException.h"
+#include "defines.h"
 
-#define STREAM_LEN  ((m_nframes) * (channels))
 
 namespace Ael{
 
@@ -13,7 +14,7 @@ namespace Ael{
     
     int AelAudioStream::ID = 0;
 
-	AelAudioStream::AelAudioStream(string FileName) : streamID(ID++)
+	AelAudioStream::AelAudioStream(string FileName) : streamID(ID++), eos(false)
 	{
 		SndfileHandle file(FileName);
 		int* aux_vector;
@@ -59,7 +60,7 @@ namespace Ael{
         
 	}
 
-	AelAudioStream::AelAudioStream(int nChannels, int nSampleRate) : streamID(ID++),  currPosition(0), channels(nChannels), sampleRate(nSampleRate), peek(0), m_nframes(0){
+	AelAudioStream::AelAudioStream(int nChannels, int nSampleRate) : streamID(ID++),  currPosition(0), channels(nChannels), sampleRate(nSampleRate), peek(0), m_nframes(0), eos(true){
         
         audioFstream.open( std::to_string(streamID).c_str() , std::fstream::binary | std::fstream::in | std::fstream::out | std::fstream::trunc );
         
@@ -78,6 +79,8 @@ namespace Ael{
         audioFstream.write(reinterpret_cast<char*>(new_frame.samples), sizeof(int) * new_frame.n_channels);
         
 		++m_nframes;
+        
+        eos = false;
         
 		return true;
 	}
@@ -110,8 +113,9 @@ namespace Ael{
 
 	AelFrame AelAudioStream::getNextFrame(){
 
-		if (STREAM_LEN <= currPosition){
-			throw AelExecption("No more Frames");
+		if (m_nframes == currPosition){
+			//throw AelExecption("No more Frames");
+            return AelFrame(channels);
 		}
 		
         AelFrame new_frame(channels);
@@ -121,7 +125,8 @@ namespace Ael{
         
         audioFstream.read(reinterpret_cast<char*>(new_frame.samples), sizeof(int) * new_frame.n_channels);
         
-        currPosition++;
+        if(++currPosition == m_nframes)
+            eos = true;
             
         return new_frame;
 		
@@ -202,6 +207,57 @@ namespace Ael{
         n_channels = 2;
         
     }
+    
+    AelFrame& AelFrame::operator=(const AelFrame& from) {
+        
+        if(this->n_channels != from.n_channels)
+            throw exception();
+        
+        for(int i = 0; i < n_channels; i++){
+            (*this)[i] = from[i];
+        }
+        
+        return *this;
+    }
+    
+    AelFrame AelFrame::operator+(const AelFrame& to) const{
+        
+        if(this->n_channels != to.n_channels)
+            throw exception();
+        
+        AelFrame frame(n_channels);
+        long int tempsample;
+        
+        
+        for(int i = 0; i < n_channels; i++){
+            
+            tempsample = (*this)[i] + to[i];
+            
+            if(abs(tempsample) <= MAX_SAMPLE_VALUE)
+                frame[i] = static_cast<int>(tempsample);
+            
+            else if(frame[i] < 0)
+                frame[i] = - MAX_SAMPLE_VALUE;
+            
+            else
+                frame[i] = MAX_SAMPLE_VALUE;
+            
+        }
+        
+        return frame;
+        
+    }
+
+	AelFrame AelFrame::operator*(float gain) const{
+		
+		AelFrame frame(n_channels);
+
+		for (int i = 0; i < n_channels; i++){
+			frame[i] = (*this)[i] * gain;
+		}
+
+		return frame;
+	}
     
 	AelFrame::~AelFrame(){
         delete[] samples;

@@ -28,6 +28,9 @@ namespace Ael {
 		int& operator[](int);
         int operator[](int) const;
         void toStereo();
+        AelFrame operator+(const AelFrame&) const;
+        AelFrame& operator=(const AelFrame&) ;
+		AelFrame operator*(float) const;
 		~AelFrame();
         
         friend class AelAudioStream;
@@ -49,6 +52,7 @@ namespace Ael {
 		int channels;
 		int peek;
 		int sampleRate;
+        bool eos;
 
 	public:
 		AelAudioStream(string);
@@ -61,6 +65,7 @@ namespace Ael {
 		int getsampleRate() { return sampleRate; }
 		AelFrame getNextFrame();
 		void SaveToFile(string);
+        bool isEOS() { return eos; }
         //void toStereo();
         //void toMono();
 		virtual ~AelAudioStream();

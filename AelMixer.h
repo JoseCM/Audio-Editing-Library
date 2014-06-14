@@ -50,7 +50,10 @@ namespace Ael {
 
     };
 
+    
     class AelChannel {
+        
+        friend class AelMixer;
         
         const int channel_ID;
         string name;
@@ -59,15 +62,15 @@ namespace Ael {
         AelAudioStream stream;
         list<AelEffect*> effectChain;
         bool onoff;
-        
+        bool eoc;
         
         
     public:
         
-        AelChannel(const string &fileName, int ID) : stream(fileName), volume(0), panner(0), onoff(true), name(fileName),
-        channel_ID(ID){ }
+        AelChannel(const string &fileName, int ID) : stream(fileName), volume(0.5), panner(0), onoff(true), name(fileName),
+        channel_ID(ID), eoc(false) { }
         void setVolumeDb(double volDb) { volume.setVolumeDb(volDb); }
-        void setPan(double pan ){ panner.setPan(pan); }
+        void setPan(double pan){ panner.setPan(pan); }
         double getVolumeDb() { return volume.getVolume(); }
         double getPan() { return panner.getPan(); }
         void turnOn() { onoff = true; }
@@ -78,26 +81,32 @@ namespace Ael {
         void setName(string newname) { name = newname; }
         void addEffect(AelEffect &effect) { effectChain.push_back(&effect); }
         AelFrame getNextFrame();
+        bool isEOC(){ return eoc; }
         
     };
     
+    
     class AelMixer{
+        
+    public:
+        
+        AelMixer() : m_nChannels(0), masterVolDb(1.0), masterPan(0.0) { }
+        int addChannel(const string &filename);
+        //outras formas de adicionar canais (vazios, associados a geradores de sinal, etc(?))
+        AelChannel* getChannel(const int &channelID);
+        bool removeChannel(const int &channelID);
+        AelFrame getNextFrame();
+        AelAudioStream* getFullMix();
+        
+        //void addEffect(int channelID, AelEffect &effect);
+        
+    private:
         
         int m_nChannels;
         list<AelChannel*> channel_list;
         AelVolume masterVolDb;
         AelPanner masterPan;
         list<AelChannel*>::iterator findChannel(const int &channelID);
-        
-    public:
-        
-        AelMixer() : m_nChannels(0), masterVolDb(1.0), masterPan(0.0) { }
-        void addChannel(const string &filename);
-        void addEffect(int channelID, AelEffect &effect);
-        //outras formas de adicionar canais (vazios, associados a geradores de sinal, etc(?))
-        bool removeChannel(const int &channelID);
-        AelFrame getNextFrame();
-        AelAudioStream* getFullMix();
     };
     
 }

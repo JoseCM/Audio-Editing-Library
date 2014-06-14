@@ -104,6 +104,7 @@ namespace Ael {
         if(frame.getChannels() > 2)
             return frame;
         
+        
         frame.toStereo();
         
         frame[0] *= panleft;
@@ -128,21 +129,25 @@ namespace Ael {
         
     }
     
-    list<AelMixer::AelChannel*>::iterator AelMixer::findChannel(const int &channelID){
+    list<AelChannel*>::iterator AelMixer::findChannel(const int &channelID){
         
         for(list<AelChannel*>::iterator it = channel_list.begin(); it != channel_list.end(); it++){
             
             if((*it)->getID() == channelID){
                 return it;
             }
-    
+            
         }
         
         return channel_list.end();
         
     }
     
-    AelFrame AelMixer::AelChannel::getNextFrame(){
+    
+    AelFrame AelChannel::getNextFrame(){
+        
+        if(eoc == true)
+            return AelFrame(stream.getchannels());
         
         AelFrame frame = stream.getNextFrame();
         
@@ -153,18 +158,34 @@ namespace Ael {
         panner.processFrame(frame);
         volume.processFrame(frame);
         
+        if(stream.isEOS())
+            eoc = true;
+        
         return frame;
         
     }
     
-    void AelMixer::addChannel(const string &filename){
+    int AelMixer::addChannel(const string &filename){
         
         AelChannel *newchannel = new AelChannel(filename, m_nChannels++);
         channel_list.push_back(newchannel);
         
+        return newchannel->getID();
+        
     }
     
-    void AelMixer::addEffect(int channelID, AelEffect &effect) {
+    AelChannel* AelMixer::getChannel(const int &channelID){
+        
+        list<AelChannel*>::iterator it = findChannel(channelID);
+        
+        if(it == channel_list.end())
+            return NULL;
+        
+        return *it;
+        
+    }
+    
+    /*void AelMixer::addEffect(int channelID, AelEffect &effect) {
         
         list<AelChannel*>::iterator it = findChannel(channelID);
         
@@ -174,6 +195,7 @@ namespace Ael {
         (*it)->addEffect(effect);
         
     }
+    */
     
     bool AelMixer::removeChannel(const int &channelID){
         
@@ -189,9 +211,57 @@ namespace Ael {
     }
     
     
-    /*
-    AelFrame getNextFrame();
-    AelAudioStream* getFullMix();
-    */
+    
+    AelFrame AelMixer::getNextFrame(){
+        
+        AelFrame new_frame(2);
+        
+        for(AelChannel* &channel : channel_list){
+            if((!channel->isEOC()) && channel->isOn())
+                new_frame = new_frame + channel->getNextFrame();
+        }
+        
+
+        return new_frame;
+        
+    }
+    
+    
+    
+    AelAudioStream* AelMixer::getFullMix(){
+        
+        AelAudioStream *fullmix = new AelAudioStream(2);
+        
+        bool endflag = false;
+        
+        while(!endflag){
+            
+            endflag = true;
+            AelFrame tempframe(2);
+            
+            for(AelChannel* &channel : channel_list){
+                if(!(channel->isEOC())){
+                    tempframe = tempframe + channel->getNextFrame();
+                    endflag = false;
+                }
+            }
+            
+            if(!endflag)
+                fullmix->AddFrames(tempframe);
+        }
+        
+        return fullmix;
+    }
+    
+    
     
 }
+
+
+
+
+
+
+
+
+
