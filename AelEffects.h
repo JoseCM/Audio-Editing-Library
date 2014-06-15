@@ -20,7 +20,7 @@ namespace Ael {
 		bool onoff;
 		
 	public:
-		AelEffect(int sampleR = 44100) : sampleRate(sampleR) , effectId(ID++) {}
+		AelEffect(int sampleR = 44100) : sampleRate(sampleR) , effectId(ID++), onoff(true) {}
 		int getId() { return effectId; }
 		void setSampleRate(int sr) { sampleRate = sr; } // melhorar atribuicao
 		int getSampleRate() { return sampleRate; }
