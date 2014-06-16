@@ -80,6 +80,7 @@ namespace Ael {
         string getName() { return name; }
         void setName(string newname) { name = newname; }
         void addEffect(AelEffect &effect) { effectChain.push_back(&effect); }
+        //void removeEffect(int ChannelId);
         AelFrame getNextFrame();
         bool isEOC(){ return eoc; }
         
