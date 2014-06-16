@@ -30,7 +30,6 @@ namespace Ael {
         void setVolumeDb(double);
         
         AelFrame& processFrame(AelFrame&);
-        AelAudioStream& processStream(AelAudioStream &);
     };
 
     class AelPanner : public AelEffect {
@@ -46,7 +45,6 @@ namespace Ael {
         void setPan(double);
         
         AelFrame& processFrame(AelFrame&);
-        AelAudioStream& processStream(AelAudioStream &);
 
     };
 
