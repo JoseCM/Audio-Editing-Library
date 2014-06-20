@@ -65,23 +65,6 @@ namespace Ael {
     }
     
     
-    
-    
-    AelAudioStream& AelVolume::processStream(AelAudioStream &stream){
-        
-        AelAudioStream *temp = new AelAudioStream(stream.getchannels());
-        
-        for(int i = 0; i < stream.getnframes(); i++){
-            AelFrame aux = stream.getNextFrame();
-            aux = this->processFrame(aux);
-            temp->AddFrames(aux);
-            
-        }
-        
-        return *temp;
-        
-    }
-    
     //AELPANNING
     //SÓ TEM SUPORTE PARA MONO E STEREO
     double AelPanner::getPan(){
@@ -111,22 +94,6 @@ namespace Ael {
         frame[1] *= panright;
         
         return frame;
-    }
-    
-    AelAudioStream& AelPanner::processStream(AelAudioStream &stream){
-        
-        
-        AelAudioStream *temp = new AelAudioStream(stream.getchannels());
-        
-        for(int i = 0; i < stream.getnframes(); i++){
-            AelFrame aux = stream.getNextFrame();
-            aux = this->processFrame(aux);
-            temp->AddFrames(aux);
-            
-        }
-        
-        return *temp;
-        
     }
     
     list<AelChannel*>::iterator AelMixer::findChannel(const int &channelID){

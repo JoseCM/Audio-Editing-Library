@@ -192,17 +192,23 @@ namespace Ael{
     
     void AelFrame::toStereo(){
         
-        if(n_channels >= 2 || n_channels <= 0)
+        if( n_channels <= 0)
             return;
         
-        int tempsample = samples[0];
+        int tempsamples[2];
+        
+        if(n_channels == 1)
+            tempsamples[0] = tempsamples[1] = samples[0];
+        else{
+            tempsamples[0] = samples[0];
+            tempsamples[1] = samples[1];
+        }
         
         delete[] samples;
-        
         samples = new int[2];
         
-        for(int i = 0; i < 2; i++)
-            samples[i] = tempsample;
+        samples[0] = tempsamples[0];
+        samples[1] = tempsamples[1];
         
         n_channels = 2;
         

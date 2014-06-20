@@ -11,7 +11,7 @@ namespace Ael{
 		AelAudioStream *temp = new AelAudioStream(mystream.getchannels());
 
 		for (int i = 0; i < mystream.getnframes(); i++){
-			AelFrame& aux = mystream.getNextFrame();
+			AelFrame aux = mystream.getNextFrame();
 			aux = processFrame(aux);
 			temp->AddFrames(aux);
 		}
@@ -27,13 +27,12 @@ namespace Ael{
 		position = (position != (delay.size() - 1) ? position + 1 : 0);
 
 		return myframe;
+    
 	}
 
 	DelayLine::~DelayLine()
 	{
 	}
-
-
 
 	/////////////////////////////Comb Filter
 
@@ -97,7 +96,7 @@ namespace Ael{
 		AelAudioStream *temp = new AelAudioStream(mystream.getchannels());
 
 		for (int i = 0; i < mystream.getnframes(); i++){
-			AelFrame& aux = mystream.getNextFrame();
+			AelFrame aux = mystream.getNextFrame();
 			aux = processFrame(aux);
 			temp->AddFrames(aux);
 		}
@@ -151,7 +150,7 @@ namespace Ael{
 			{
 				vdelayLen -= 7500;
 			}
-			AelFrame& aux = mystream.getNextFrame();
+			AelFrame aux = mystream.getNextFrame();
 			aux = processFrame(aux);
 			temp->AddFrames(aux);
 		}
