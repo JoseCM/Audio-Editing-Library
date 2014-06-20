@@ -31,8 +31,6 @@ namespace Ael {
 		void m_turnOff() { onoff = false; }
         virtual ~AelEffect() { }
 	};
-
-
 }
 
 #endif
