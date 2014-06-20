@@ -253,13 +253,53 @@ namespace Ael{
         return frame;
         
     }
+    
+    AelFrame AelFrame::operator-(const AelFrame& to) const{
+        
+        if(this->n_channels != to.n_channels)
+            throw exception();
+        
+        AelFrame frame(n_channels);
+        long int tempsample;
+        
+        
+        for(int i = 0; i < n_channels; i++){
+            
+            tempsample = (*this)[i] - to[i];
+            
+            if(abs(tempsample) <= MAX_SAMPLE_VALUE)
+                frame[i] = static_cast<int>(tempsample);
+            
+            else if(frame[i] < 0)
+                frame[i] = - MAX_SAMPLE_VALUE;
+            
+            else
+                frame[i] = MAX_SAMPLE_VALUE;
+            
+        }
+        
+        return frame;
+    
+    
+    }
 
 	AelFrame AelFrame::operator*(float gain) const{
 		
 		AelFrame frame(n_channels);
+        long int tempsample;
 
 		for (int i = 0; i < n_channels; i++){
-			frame[i] = (*this)[i] * gain;
+            
+            tempsample = (*this)[i] * gain;
+            
+            if(abs(tempsample) <= MAX_SAMPLE_VALUE)
+                frame[i] = static_cast<int>(tempsample);
+            
+            else if(frame[i] < 0)
+                frame[i] = - MAX_SAMPLE_VALUE;
+            
+            else
+                frame[i] = MAX_SAMPLE_VALUE;
 		}
 
 		return frame;
