@@ -80,10 +80,6 @@ namespace Ael {
 	};
 
 
-
-
-
-
 	class AelChorus : public AelVariableDelay{
 
 	public:

@@ -132,6 +132,35 @@ namespace Ael {
         
     }
     
+    bool AelChannel::removeEffect(int effectId){
+        
+        for(list<AelEffect*>::iterator it = effectChain.begin(); it != effectChain.end(); it++){
+            
+            if((*it)->getId() == effectId){
+                effectChain.erase(it);
+                return true;
+            }
+    
+        }
+        
+        return false;
+        
+    }
+    
+    AelEffect* AelChannel::getEffect(int effectId){
+        
+        for(list<AelEffect*>::iterator it = effectChain.begin(); it != effectChain.end(); it++){
+            
+            if((*it)->getId() == effectId)
+               return  *it;
+            
+        }
+        
+        return nullptr;
+        
+    }
+    
+    
     int AelMixer::addChannel(const string &filename){
         
         AelChannel *newchannel = new AelChannel(filename, m_nChannels++);

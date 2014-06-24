@@ -77,8 +77,9 @@ namespace Ael {
         int getID() { return channel_ID; }
         string getName() { return name; }
         void setName(string newname) { name = newname; }
-        void addEffect(AelEffect &effect) { effectChain.push_back(&effect); }
-        //void removeEffect(int ChannelId);
+        int addEffect(AelEffect &effect) { effectChain.push_back(&effect); return effect.getId();}
+        bool removeEffect(int effectId);
+        AelEffect* getEffect(int effectId);
         AelFrame getNextFrame();
         bool isEOC(){ return eoc; }
         
