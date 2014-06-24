@@ -11,6 +11,9 @@
 
 #define MAX_SAMPLE_VALUE ( (pow(2.0, 32.0)/2) - 1 )
 
+#define M_PI 3.14159265359
+
+
 namespace Ael {
     
     //AEL VOLUME
