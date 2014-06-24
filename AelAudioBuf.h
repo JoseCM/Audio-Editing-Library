@@ -29,6 +29,7 @@ namespace Ael {
         int operator[](int) const;
         void toStereo();
         AelFrame operator+(const AelFrame&) const;
+        AelFrame operator-(const AelFrame&) const;
         AelFrame& operator=(const AelFrame&) ;
 		AelFrame operator*(float) const;
 		~AelFrame();

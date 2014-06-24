@@ -23,7 +23,7 @@ namespace Ael {
     }
     
     /************************************
-     *  AelIIR
+     *  AelIIR - 1st Order
      ************************************/
     
     void AelIIR::set_LPF(){
@@ -46,67 +46,44 @@ namespace Ael {
     AelFrame& AelIIR::processFrame(AelFrame& Frame){
         //y[n] = a0 * x[n] + a1 * x[n-1] + b1 * y[n-1]
         
-        AelFrame aux = Frame;
-        for(int i = 0; i < Frame.getChannels() ; i++){
-            aux[i] = Frame[i];
-            Frame[i] = gain * ((Frame[i] * coef_a[0]) + (in_1[i] * coef_a[1]) + (out_1[i] * coef_b[0]));
-            out_1[i] = Frame[i];
-            in_1[i] = aux[i];
-        }
+        AelFrame in = Frame * gain;
+        
+        Frame = (in * coef_a[0]) + (in_1 * coef_a[1]) + (out_1 * coef_b[0]) ;
+        
+        out_1 = Frame;
+        in_1 = in;
+        
+        Frame = (in * (1 - getWetLevel()) + (Frame * getWetLevel()));  //dry/wet
         
         return Frame;
-    }
-    
-    AelAudioStream& AelIIR::processStream(AelAudioStream &Stream){
-        
-        AelAudioStream *temp = new AelAudioStream(Stream.getchannels());
-        
-        for (int i=0; i< Stream.getnframes(); i++){
-            AelFrame aux = Stream.getNextFrame();
-            aux = this->processFrame(aux);
-            temp->AddFrames(aux);
-        }
-        
-        return *temp;
         
     }
-    
     
     /************************************
-     *  ButterWorth
+     *  ButterWorth - 2nd Order
      ************************************/
     
     AelFrame& ButterWorth::processFrame(AelFrame& Frame){
         //y(n) = a0x(n) + a1x(n-1) + a2x(n-2) -  b0y(n - 1) - b1y(n-2).
         
-        AelFrame temp = Frame;
+        AelFrame in = Frame * gain;
         
-        for(int i = 0; i < Frame.getChannels() ; i++){
-            temp[i] *= gain;
-            Frame[i] = ( (coef_a[0] * temp[i]) + (coef_a[1] * in_1[i]) + (coef_a[2] * in_2[i]));
-            Frame[i] -= ( (coef_b[0] * out_1[i]) + (coef_b[1] * out_2[i]) );
-            in_2[i] = in_1[i];
-            in_1[i] = temp[i];
-            out_2[i] = out_1[i];
-            out_1[i] = Frame[i];
-            
-        }
+        Frame = (in * coef_a[0]) + (in_1 * coef_a[1]) + (in_2 * coef_a[2]);
+        Frame = Frame - (out_1 * coef_b[0]) - (out_2 * coef_b[1]) ;
+        
+        in_2 = in_1;
+        in_1 = in;
+        out_2 = out_1;
+        out_1 = Frame;
+        
+        Frame = in * (1 - getWetLevel()) + (Frame * getWetLevel());   //dry/wet
+        
         return Frame;
-    }
-    
-    AelAudioStream& ButterWorth::processStream(AelAudioStream &Stream){
         
-        AelAudioStream *temp = new AelAudioStream(Stream.getchannels());
-        
-        for (int i=0; i< Stream.getnframes(); i++){
-            AelFrame aux = Stream.getNextFrame();
-            aux = this->processFrame(aux);
-            temp->AddFrames(aux);
-        }
-        return *temp;
     }
-    
+
     void ButterWorth::set_LPF(){
+        
         float w = tan( (pi * cutoff) / getSampleRate() );
         float y = 1 / w;
         
@@ -115,9 +92,11 @@ namespace Ael {
         coef_a[2] = coef_a[0];
         coef_b[0] = 2 * coef_a[0] * (1 - pow(y, 2));
         coef_b[1] = coef_a[0] * (1 - (2*y) + pow(y, 2));
+        
     }
     
     void ButterWorth::set_HPF(){
+        
         float y = tan( (pi * cutoff) / getSampleRate() );
         
         coef_a[0] = 1 / ( 1 + (2 * y) + pow(y, 2) ) ;
@@ -125,9 +104,11 @@ namespace Ael {
         coef_a[2] = coef_a[0];
         coef_b[0] = 2 * coef_a[0] * ( pow(y, 2) - 1 );
         coef_b[1] = coef_a[0] * ( 1 - (2*y) + pow(y, 2) );
+        
     }
     
     void ButterWorth::set_NOTCH(float bw){
+        
         float BW = bw;
         float y = tan( (pi * BW) / getSampleRate() );
         float Q = 2 * cos( (2 * pi * cutoff) / getSampleRate());
@@ -139,5 +120,5 @@ namespace Ael {
         coef_b[1] = coef_a[0] * (y -1);
         
     }
-    
+
 }
