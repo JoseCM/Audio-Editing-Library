@@ -1,164 +1,116 @@
 #include "Delays.h"
+#include "AelException.h"
 
 namespace Ael{
-	DelayLine::DelayLine(float time, float sampleRate, int n_ch) : position(0), channels(n_ch)
+	AelDelayLine::AelDelayLine(float time, float sampleRate, int n_ch) : position_r(0), position_w(0), channels(n_ch)
 	{
 		delayLen = time * sampleRate;
 		delay.resize(delayLen, AelFrame(n_ch));
 	}
 
-	AelAudioStream& DelayLine::processStream(AelAudioStream& mystream){
-		AelAudioStream *temp = new AelAudioStream(mystream.getchannels());
+	bool AelDelayLine::write(AelFrame& iframe){
 
-		for (int i = 0; i < mystream.getnframes(); i++){
-			AelFrame aux = mystream.getNextFrame();
-			aux = processFrame(aux);
-			temp->AddFrames(aux);
+		if (delayLen){
+			delay[position_w] = iframe;
+			position_w = (position_w != (delay.size() - 1) ? position_w + 1 : 0);
+			return true;
 		}
 
-		return *temp;
-	}
-
-	AelFrame& DelayLine::processFrame(AelFrame& myframe){
-
-		AelFrame frame_aux = myframe;
-		myframe = delay[position];
-		delay[position] = frame_aux;
-		position = (position != (delay.size() - 1) ? position + 1 : 0);
-
-		return myframe;
-    
-	}
-
-	DelayLine::~DelayLine()
-	{
-	}
-
-	/////////////////////////////Comb Filter
-
-
-	//gain(pow(0.001, time / rvbtime))
-	AelCombFilter::AelCombFilter(float time, float fd_gain, float samplerate, int n_ch) : gain(fd_gain), DelayLine(time, samplerate, n_ch)
-	{
-	}
-
-	AelFrame& AelCombFilter::processFrame(AelFrame& myframe){
-
-		AelFrame frame_aux = myframe;
-		myframe = delay[position];
-		delay[position] = frame_aux + delay[position] * gain; //out*gain
-		position = (position != (delay.size() - 1) ? position + 1 : 0);
-
-		return myframe;
-	}
-
-	AelCombFilter::~AelCombFilter()
-	{
-	}
-
-	//////////////////////////All Pass Filter
-
-	AelAllPassFilter::AelAllPassFilter(float time, float fd_gain, float samplerate, int n_ch) : gain(fd_gain), DelayLine(time, samplerate, n_ch)
-	{
-	}
-
-	AelFrame& AelAllPassFilter::processFrame(AelFrame& myframe){
-
-		AelFrame frame_aux = myframe;
-		myframe = delay[position];
-		delay[position] = frame_aux + delay[position] * gain; //out*gain
-		myframe = delay[position] + (myframe*(-gain));
-		position = (position != (delay.size() - 1) ? position + 1 : 0);
-
-		return myframe;
-	}
-
-	AelAllPassFilter::~AelAllPassFilter()
-	{
-	}
-
-
-	/////////////////////////////Variable Delay
-
-	AelVariableDelay::AelVariableDelay(float _delay, float max_delay, float samplerate, int n_ch) : channels(n_ch)
-	{
-		if (_delay >= max_delay) {} //throw exeption
-
-		maxDelayLen = max_delay * samplerate;
-		vdelayLen = _delay * samplerate;
-
-		delay.resize((int)(maxDelayLen), AelFrame(channels));
-		position = 0;
+		return false;
 
 	}
 
-	AelAudioStream& AelVariableDelay::processStream(AelAudioStream& mystream){
-		AelAudioStream *temp = new AelAudioStream(mystream.getchannels());
+	AelFrame AelDelayLine::read(){
 
-		for (int i = 0; i < mystream.getnframes(); i++){
-			AelFrame aux = mystream.getNextFrame();
-			aux = processFrame(aux);
-			temp->AddFrames(aux);
+		AelFrame new_frame(channels);
+		if (delayLen){
+			new_frame = AelFrame(delay[position_r]);
+			position_r = (position_r != (delay.size() - 1) ? position_r + 1 : 0);
 		}
 
-		return *temp;
+		return new_frame;
 	}
 
-	AelFrame& AelVariableDelay::processFrame(AelFrame& myframe){
+	AelFrame AelDelayLine::readWrite(AelFrame& iframe){
+		write(iframe);
+		return read();
+	}
 
-		int rpi;
+	AelDelayLine::~AelDelayLine()
+	{
+	}
+
+
+//////////////////////////VDELAYLINE
+
+	AelVDelayLine::AelVDelayLine(float del, float maxdel, float sampleRate, int n_ch) : position_w(0)
+	{
+		vdt = del * sampleRate;
+		mdt = maxdel * sampleRate;
+		if (vdt > mdt){ AelExecption("VariableDelay greater than MaxDelay"); }
+		vdelay.resize(mdt, AelFrame(n_ch));
+
+	}
+
+	AelFrame AelVDelayLine::read(){
+
 		float rp, frac;
-		AelFrame next(channels), argument_copy = myframe;
+		int rpi;
 
-		rp = position - vdelayLen;
-		rp = (rp >= 0 ? (rp < maxDelayLen ? rp : rp - maxDelayLen) : rp + maxDelayLen);
-		rpi = floor(rp);
-		frac = rp - rpi;
-		next = (rpi != maxDelayLen - 1 ? delay[rpi + 1] : delay[0]);
-
-		for (int i = 0; i < myframe.getChannels(); i++){
-			myframe[i] = delay[rpi][i] + frac*(next[i] - delay[rpi][i]);
+		if (mdt){
+			rp = position_w - vdt;
+			rp = (rp >= 0 ? (rp < mdt ? rp : rp - mdt) : rp + mdt);
+			rpi = floor(rp);
+			frac = rp - rpi;
+			AelFrame next = (rpi != mdt - 1 ? vdelay[rpi + 1] : vdelay[0]);
+			AelFrame out = vdelay[rpi] + (next - vdelay[rpi])*frac;
+			return out;
 		}
+		return AelFrame(channels);
 
-		delay[position] = argument_copy;
-		position = (position != maxDelayLen - 1 ? position + 1 : 0);
-
-		return myframe;
 	}
 
-	AelVariableDelay::~AelVariableDelay(){}
+	bool AelVDelayLine::write(AelFrame& iframe){
+		if (mdt){
+			vdelay[position_w] = iframe;
+			position_w = (position_w != mdt - 1 ? position_w + 1 : 0);
+			return true;
+		}
+		return false;
+	}
+
+	AelFrame AelVDelayLine::readWrite(AelFrame& iframe){
+		AelFrame out = read();
+		write(iframe);
+		return out;
+	}
+
+	AelVDelayLine::~AelVDelayLine()
+	{}
 
 
 
 
+/////////////////////UNICOMBFILTER
 
-	////////////////////Chorus
-
-
-
-	AelChorus::AelChorus(float dltime, float _depth, float _rate, float _center, float _sr, int n_channels) : center(_center), depth(_depth), rate(_rate), channels(n_channels), samplerate(_sr), AelVariableDelay(dltime, 0.7)
+	AelUniComb::AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate, int n_ch) : BL(_BL), FB(_FB), FF(_FF), channels(n_ch), ucombdelay(time, samplerate, n_ch), AelEffect()
 	{
 	}
 
-	AelAudioStream& AelChorus::processStream(AelAudioStream& mystream)
-	{
-		AelAudioStream *temp = new AelAudioStream(mystream.getchannels());
-		int sampleLen = (1 / rate) * samplerate;
+	AelFrame& AelUniComb::processFrame(AelFrame& iframe){
 
-		for (int i = 0; i < mystream.getnframes(); i++){
-			if (i == 15000)
-			{
-				vdelayLen -= 7500;
-			}
-			AelFrame aux = mystream.getNextFrame();
-			aux = processFrame(aux);
-			temp->AddFrames(aux);
-		}
+		AelFrame &out = iframe;
+		AelFrame xh(channels), delayout = ucombdelay.read();
 
-		return *temp;
+		xh = iframe + delayout * FB; // xh = in + delay*FB
+		out = delayout * FF + xh * BL; // out = delay*FF + xh*BL
+		ucombdelay.write(xh); //delay = xh
 
+
+		return out;
 	}
 
-	AelChorus::~AelChorus(){}
+	AelUniComb::~AelUniComb()
+	{}
 
 }

@@ -11,6 +11,9 @@
 
 #define MAX_SAMPLE_VALUE ( (pow(2.0, 32.0)/2) - 1 )
 
+#define M_PI 3.14159265359
+
+
 namespace Ael {
     
     //AEL VOLUME
@@ -131,6 +134,35 @@ namespace Ael {
         return frame;
         
     }
+    
+    bool AelChannel::removeEffect(int effectId){
+        
+        for(list<AelEffect*>::iterator it = effectChain.begin(); it != effectChain.end(); it++){
+            
+            if((*it)->getId() == effectId){
+                effectChain.erase(it);
+                return true;
+            }
+    
+        }
+        
+        return false;
+        
+    }
+    
+    AelEffect* AelChannel::getEffect(int effectId){
+        
+        for(list<AelEffect*>::iterator it = effectChain.begin(); it != effectChain.end(); it++){
+            
+            if((*it)->getId() == effectId)
+               return  *it;
+            
+        }
+        
+        return nullptr;
+        
+    }
+    
     
     int AelMixer::addChannel(const string &filename){
         
