@@ -10,5 +10,9 @@
 
 #define STREAM_LEN  ((m_nframes) * (channels))
 
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif
+
 #define pi 3.14159265359
 

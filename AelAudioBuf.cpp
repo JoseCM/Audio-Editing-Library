@@ -167,7 +167,7 @@ namespace Ael{
     AelFrame::AelFrame(const AelFrame &source): samples(new int[source.n_channels]), n_channels(source.n_channels){
         
         for(int i = 0; i < n_channels; i++)
-            samples[i] = source[i];
+            samples[i] = source.samples[i];
         
     }
     
@@ -248,16 +248,16 @@ namespace Ael{
         
         for(int i = 0; i < n_channels; i++){
             
-            tempsample = (*this)[i] + to[i];
+            tempsample = samples[i] + to[i];
             
             if(abs(tempsample) <= MAX_SAMPLE_VALUE)
-                frame[i] = static_cast<int>(tempsample);
+                frame.samples[i] = static_cast<int>(tempsample);
             
-            else if(frame[i] < 0)
-                frame[i] = - MAX_SAMPLE_VALUE;
+            else if(frame.samples[i] < 0)
+                frame.samples[i] = - MAX_SAMPLE_VALUE;
             
             else
-                frame[i] = MAX_SAMPLE_VALUE;
+                frame.samples[i] = MAX_SAMPLE_VALUE;
             
         }
         
@@ -276,16 +276,16 @@ namespace Ael{
         
         for(int i = 0; i < n_channels; i++){
             
-            tempsample = (*this)[i] - to[i];
+            tempsample = samples[i] - to[i];
             
             if(abs(tempsample) <= MAX_SAMPLE_VALUE)
-                frame[i] = static_cast<int>(tempsample);
+                frame.samples[i] = static_cast<int>(tempsample);
             
             else if(frame[i] < 0)
-                frame[i] = - MAX_SAMPLE_VALUE;
+                frame.samples[i] = - MAX_SAMPLE_VALUE;
             
             else
-                frame[i] = MAX_SAMPLE_VALUE;
+                frame.samples[i] = MAX_SAMPLE_VALUE;
             
         }
         
@@ -301,16 +301,16 @@ namespace Ael{
 
 		for (int i = 0; i < n_channels; i++){
             
-            tempsample = (*this)[i] * gain;
+            tempsample = samples[i] * gain;
             
             if(abs(tempsample) <= MAX_SAMPLE_VALUE)
-                frame[i] = static_cast<int>(tempsample);
+                frame.samples[i] = static_cast<int>(tempsample);
             
             else if(frame[i] < 0)
-                frame[i] = - MAX_SAMPLE_VALUE;
+                frame.samples[i] = - MAX_SAMPLE_VALUE;
             
             else
-                frame[i] = MAX_SAMPLE_VALUE;
+                frame.samples[i] = MAX_SAMPLE_VALUE;
 		}
 
 		return frame;
