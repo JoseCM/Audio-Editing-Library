@@ -190,6 +190,17 @@ namespace Ael{
         
     }
     
+    int AelFrame::maxSample() const{
+        
+        int max = 0;
+        
+        for(int i = 0; i < n_channels; i++)
+            if(abs(samples[i]) > max)
+                max = samples[i];
+        
+        return max;
+    }
+    
     void AelFrame::toStereo(){
         
         if(n_channels <= 0)

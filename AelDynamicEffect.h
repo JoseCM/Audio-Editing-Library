@@ -14,10 +14,22 @@
 
 namespace Ael {
     
-    class AelDynamicEffect : public AelEffect {
+    class AelCompressor: public AelEffect {
 
+        double ratio;
+        double threshold;
+        double attack, release;
+        int prev_sample;
+        
         public:
         
+        AelCompressor(double rt = 1.0, double th = 0.0, double atck = 0.005, double rls = 0.13);
+        void setRatio(double ratio_);
+        void setThreshold(double thresholddb);
+        void setAttack(double attack_);
+        void setRelease(double release_);
+        
+        virtual AelFrame& processFrame(AelFrame&);
         
     };
 
