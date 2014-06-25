@@ -16,53 +16,54 @@
 
 namespace Ael {
     
+    
     class AelFilter : public AelEffect {
+    
     protected:
         vector<float> coef_a, coef_b;
         float gain, cutoff;
+        
     public:
-        AelFilter(int =44100, float =1.0, float =1.0, int =1, int =1);
+        AelFilter(int =44100, float =1.0, float =1.0);
         virtual ~AelFilter() {    }
-        
-        void set_cutoff(float cutoff) { this->cutoff = cutoff; }
-        void set_gain(float gain) { this->gain = gain; }
-        
-        virtual void set_LPF() = 0;
-        virtual void set_HPF() = 0;
-        
+        virtual void set_gain(float);
+        virtual void set_cutoff(float) = 0;
         virtual AelFrame& processFrame(AelFrame&) = 0;
     };
     
-
+    //1st Order
     class AelIIR: public AelFilter{
+        
+        enum iir {lowpass, highpass} ON;
         AelFrame out_1, in_1;
         
-        
     public:
-        AelIIR(int Sr=44100, float G=1.0, float Coff=1.0 ,int n_ch=2, int n_coefa=2, int n_coefb=1) : AelFilter(Sr, G, Coff, n_coefa, n_coefb) , out_1(n_ch), in_1(n_ch) { }
-        
-        virtual void set_LPF();
-        virtual void set_HPF();
-        
+        AelIIR(int Sr=44100, float G=1.0, float Coff=1.0 ,int n_ch=2);
+        virtual ~AelIIR() {  }
+        void set_LPF();
+        void set_HPF();
+        virtual void set_cutoff(float);
         virtual AelFrame& processFrame(AelFrame&);
-        
     };
     
-    
-    class ButterWorth: public AelFilter{
+    //2nd Order
+    class AelButterWorth: public AelFilter{
+        
+        enum butterworth {lowpass, highpass, bandpass, rejectband} ON;
         AelFrame out_1, out_2, in_1, in_2;
+        float BandWidth;
         
     public:
-        ButterWorth(int Sr=44100, float G=1.0, float Coff=1.0, int n_ch=2 ,int n_coefa=3, int n_coefb=2): AelFilter(Sr, G, Coff, n_coefa, n_coefb), out_1(n_ch), out_2(n_ch), in_1(n_ch), in_2(n_ch) { }
-        
-        virtual void set_LPF();
-        virtual void set_HPF();
-        void set_NOTCH(float);
-        
+        AelButterWorth(int Sr=44100, float G=1.0, float Coff=1.0, int n_ch=2, float BW =1.0);
+        virtual ~AelButterWorth(){ }
+        void set_LPF();
+        void set_HPF();
+        void set_BRF();
+        void set_BPF();
+        void set_bandwidth(float);
+        virtual void set_cutoff(float);
         virtual AelFrame& processFrame(AelFrame&);
     };
-    
     
 }
-
 #endif /* defined(__AEL__AelFilter__) */
