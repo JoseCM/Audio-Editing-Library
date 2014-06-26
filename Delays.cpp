@@ -106,6 +106,30 @@ namespace Ael{
 
 		return out;
 	}
+    
+    void AelUniComb::setBL(float _BL){
+        BL = _BL;
+    }
+    
+    void AelUniComb::setFB(float _FB){
+        FB = _FB;
+    }
+    
+    void AelUniComb::setFF(float _FF){
+        FF = _FF;
+    }
+    
+    float AelUniComb::getBL(){
+        return BL;
+    }
+    
+    float AelUniComb::getFB(){
+        return FB;
+    }
+    
+    float AelUniComb::getFF(){
+        return FF;
+    }
 
 	AelUniComb::~AelUniComb()
 	{}
@@ -183,6 +207,33 @@ namespace Ael{
     
     
 //////////////////////AELREVERB
+    
+    AelReverb::AelReverb(float RVT_, int n_ch, int samplerate): AelEffect(samplerate), RVT(RVT_),
+        C1(0.0297, 0, pow(0.001, 0.0297/RVT_), 1, samplerate, n_ch),
+        C2(0.0371, 0, pow(0.001, 0.0371/RVT_), 1, samplerate, n_ch),
+        C3(0.0411, 0, pow(0.001, 0.0411/RVT_), 1, samplerate, n_ch),
+        C4(0.0437, 0, pow(0.001, 0.0437/RVT_), 1, samplerate, n_ch),
+        A1(0.09683, pow(0.001, 0.09683/0.005), -pow(0.001, 0.09683/0.005), 1, samplerate, n_ch),
+        A2(0.03292, pow(0.001, 0.03292/0.0017), -pow(0.001, 0.03292/0.0017), 1, samplerate, n_ch)
+    {
+        
+    }
+    
+
+    void AelReverb::setRVT(float rvt){
+        
+        RVT = rvt;
+        
+        C1.setFB(pow(0.001, 0.0297/RVT));
+        C2.setFB(pow(0.001, 0.0371/RVT));
+        C3.setFB(pow(0.001, 0.0411/RVT));
+        C4.setFB(pow(0.001, 0.0437/RVT));
+    }
+    
+    
+    float AelReverb::getRVT(){
+        return RVT;
+    }
     
     AelFrame& AelReverb::processFrame(AelFrame& iFrame){
         

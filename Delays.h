@@ -57,6 +57,12 @@ namespace Ael {
 	public:
 		AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate = 44100, int n_ch = 2);
 		AelFrame& processFrame(AelFrame&);
+        void setBL(float);
+        void setFB(float);
+        void setFF(float);
+        float getBL();
+        float getFB();
+        float getFF();
 		~AelUniComb();
 	private:
 		AelFixDelayLine ucombdelay;
@@ -102,22 +108,12 @@ namespace Ael {
         AelUniComb A2;
         
     public:
-        AelReverb(float RVT_, int n_ch=2, int samplerate=44100): AelEffect(samplerate), RVT(RVT_),
-            C1(0.0297, 0, pow(0.001, 0.0297/RVT_), 1, samplerate, n_ch),
-            C2(0.0371, 0, pow(0.001, 0.0371/RVT_), 1, samplerate, n_ch),
-            C3(0.0411, 0, pow(0.001, 0.0411/RVT_), 1, samplerate, n_ch),
-            C4(0.0437, 0, pow(0.001, 0.0437/RVT_), 1, samplerate, n_ch),
-            A1(0.09683, pow(0.001, 0.09683/0.005), -pow(0.001, 0.09683/0.005), 1, samplerate, n_ch),
-            A2(0.03292, pow(0.001, 0.03292/0.0017), -pow(0.001, 0.03292/0.0017), 1, samplerate, n_ch)
-        {
-        
-        }
-        
+        AelReverb(float RVT_, int n_ch=2, int samplerate=44100);
         void setRVT(float rvt);
         float getRVT();
         virtual AelFrame& processFrame(AelFrame& iFrame);
 
-        //float time, float _BL, float _FB, float _FF, float samplerate = 44100, int n_ch = 2)
+       
     
     };
 
