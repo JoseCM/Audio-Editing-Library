@@ -24,7 +24,7 @@ namespace Ael {
         float gain, cutoff;
         
     public:
-        AelFilter(int =44100, float =1.0, float =1.0);
+        AelFilter(int =44100, float =1.0, float =4410);
         virtual ~AelFilter() {    }
         virtual void set_gain(float);
         virtual void set_cutoff(float) = 0;
@@ -38,7 +38,7 @@ namespace Ael {
         AelFrame out_1, in_1;
         
     public:
-        AelIIR(int Sr=44100, float G=1.0, float Coff=1.0 ,int n_ch=2);
+        AelIIR(int Sr=44100, float G=1.0, float Coff=4410 ,int n_ch=2);
         virtual ~AelIIR() {  }
         void set_LPF();
         void set_HPF();
@@ -54,7 +54,7 @@ namespace Ael {
         float BandWidth;
         
     public:
-        AelButterWorth(int Sr=44100, float G=1.0, float Coff=1.0, int n_ch=2, float BW =1.0);
+        AelButterWorth(int Sr=44100, float G=1.0, float Coff=4410, int n_ch=2, float BW =970);
         virtual ~AelButterWorth(){ }
         void set_LPF();
         void set_HPF();

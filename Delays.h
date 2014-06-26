@@ -50,7 +50,6 @@ namespace Ael {
 		AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate = 44100, int n_ch = 2);
 		AelFrame& processFrame(AelFrame&);
 		~AelUniComb();
-
 	private:
 		AelDelayLine ucombdelay;
 		int channels;
