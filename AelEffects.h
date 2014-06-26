@@ -12,7 +12,7 @@ using namespace std;
 namespace Ael {
 
 	class AelEffect{
-	private:
+	protected:
 		static int ID;   //tem que ser inicializada em algum lado! (?)
 		const int effectId;
 		string effectName;

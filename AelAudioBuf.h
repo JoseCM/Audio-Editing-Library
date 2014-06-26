@@ -27,6 +27,7 @@ namespace Ael {
 		int getChannels();
 		int& operator[](int);
         int operator[](int) const;
+        int maxSample() const;
         void toStereo();
         AelFrame operator+(const AelFrame&) const;
         AelFrame operator-(const AelFrame&) const;

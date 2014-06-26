@@ -6,9 +6,13 @@ using namespace Ael;
     int AelEffect::ID = 0;
     
 AelAudioStream& AelEffect::processStream(AelAudioStream &mystream){
+    
     AelAudioStream *temp = new AelAudioStream(mystream.getchannels());
     
     for (int i = 0; i < mystream.getnframes(); i++){
+        if(i == 1000){
+            ;
+        }
         AelFrame aux = mystream.getNextFrame();
         aux = processFrame(aux);
         temp->AddFrames(aux);

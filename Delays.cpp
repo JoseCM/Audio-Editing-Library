@@ -2,15 +2,15 @@
 #include "AelException.h"
 
 namespace Ael{
-	AelDelayLine::AelDelayLine(float time, float sampleRate, int n_ch) : position_r(0), position_w(0), channels(n_ch)
+    
+	AelFixDelayLine::AelFixDelayLine(float time, float sampleRate, int n_ch) : AelDelayLine(time, sampleRate, n_ch), position_r(0), position_w(0)
 	{
-		delayLen = time * sampleRate;
-		delay.resize(delayLen, AelFrame(n_ch));
+
 	}
 
-	bool AelDelayLine::write(AelFrame& iframe){
+	bool AelFixDelayLine::write(AelFrame& iframe){
 
-		if (delayLen){
+		if (maxDelayLen){
 			delay[position_w] = iframe;
 			position_w = (position_w != (delay.size() - 1) ? position_w + 1 : 0);
 			return true;
@@ -20,10 +20,10 @@ namespace Ael{
 
 	}
 
-	AelFrame AelDelayLine::read(){
+	AelFrame AelFixDelayLine::read(){
 
 		AelFrame new_frame(channels);
-		if (delayLen){
+		if (maxDelayLen){
 			new_frame = AelFrame(delay[position_r]);
 			position_r = (position_r != (delay.size() - 1) ? position_r + 1 : 0);
 		}
@@ -31,39 +31,33 @@ namespace Ael{
 		return new_frame;
 	}
 
-	AelFrame AelDelayLine::readWrite(AelFrame& iframe){
+	AelFrame AelFixDelayLine::readWrite(AelFrame& iframe){
 		write(iframe);
 		return read();
-	}
-
-	AelDelayLine::~AelDelayLine()
-	{
 	}
 
 
 //////////////////////////VDELAYLINE
 
-	AelVDelayLine::AelVDelayLine(float del, float maxdel, float sampleRate, int n_ch) : position_w(0)
+	AelVDelayLine::AelVDelayLine(float del, float maxdel, float sampleRate, int n_ch) : AelDelayLine(maxdel, sampleRate, n_ch), position_w(0), vdt(del * sampleRate)
 	{
-		vdt = del * sampleRate;
-		mdt = maxdel * sampleRate;
-		if (vdt > mdt){ AelExecption("VariableDelay greater than MaxDelay"); }
-		vdelay.resize(mdt, AelFrame(n_ch));
-
+		if (vdt > maxDelayLen){ AelExecption("VariableDelay greater than MaxDelay"); }
 	}
-
+    
+    
+    
 	AelFrame AelVDelayLine::read(){
 
 		float rp, frac;
 		int rpi;
 
-		if (mdt){
+		if (maxDelayLen){
 			rp = position_w - vdt;
-			rp = (rp >= 0 ? (rp < mdt ? rp : rp - mdt) : rp + mdt);
+			rp = (rp >= 0 ? (rp < maxDelayLen ? rp : rp - maxDelayLen) : rp + maxDelayLen);
 			rpi = floor(rp);
 			frac = rp - rpi;
-			AelFrame next = (rpi != mdt - 1 ? vdelay[rpi + 1] : vdelay[0]);
-			AelFrame out = vdelay[rpi] + (next - vdelay[rpi])*frac;
+			AelFrame next = (rpi != maxDelayLen - 1 ? delay[rpi + 1] : delay[0]);
+			AelFrame out = delay[rpi] + (next - delay[rpi]) * frac;
 			return out;
 		}
 		return AelFrame(channels);
@@ -71,9 +65,9 @@ namespace Ael{
 	}
 
 	bool AelVDelayLine::write(AelFrame& iframe){
-		if (mdt){
-			vdelay[position_w] = iframe;
-			position_w = (position_w != mdt - 1 ? position_w + 1 : 0);
+		if (maxDelayLen){
+			delay[position_w] = iframe;
+			position_w = (position_w != maxDelayLen - 1 ? position_w + 1 : 0);
 			return true;
 		}
 		return false;
@@ -84,16 +78,19 @@ namespace Ael{
 		write(iframe);
 		return out;
 	}
-
-	AelVDelayLine::~AelVDelayLine()
-	{}
-
+    
+    void AelVDelayLine::setDelayTime(float delayTime){
+        
+        vdt = delayTime * sampleRate;
+		if (vdt > maxDelayLen){ AelExecption("VariableDelay greater than MaxDelay"); }
+        
+    }
 
 
 
 /////////////////////UNICOMBFILTER
 
-	AelUniComb::AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate, int n_ch) : BL(_BL), FB(_FB), FF(_FF), channels(n_ch), ucombdelay(time, samplerate, n_ch), AelEffect()
+	AelUniComb::AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate, int n_ch) : BL(_BL), FB(_FB), FF(_FF), channels(n_ch), ucombdelay(time, samplerate, n_ch), AelEffect(samplerate)
 	{
 	}
 
@@ -112,5 +109,101 @@ namespace Ael{
 
 	AelUniComb::~AelUniComb()
 	{}
+    
+    
+/////////////////////AELFLANGER
+    
+    void AelFlanger::setDelayTime(float dt){
+        
+        if(dt < 0 || dt > 15.00000001)
+            return;
+        
+        try {
+            delayLine.setDelayTime(dt);
+            delayTime = dt;
+        } catch (AelExecption&) {
+            
+        }
+        
+    }
+    
+    
+    void AelFlanger::setFeedBack(float fb){
+        
+        if(fb > 1.0 || fb < -1.0)
+            return;
+        
+        feedBack = fb;
+    }
+    
+    
+    void AelFlanger::setLFOFreq(float freq){
+        
+        if(freq < 0.1 || freq > 1.00001)
+            return;
+        
+        angleInc = 2 * M_PI *  freq / sampleRate;
+        
+        freq = freq;
+        
+    }
+    
+    float AelFlanger::getDelayTime(){
+        
+        return delayTime;
+        
+    }
+    
+    float AelFlanger::getFeedBack(){
+        return feedBack;
+    }
+    
+    float AelFlanger::getLFOFreq(){
+        return LFOfreq;
+    }
+    
+    AelFrame& AelFlanger::processFrame(AelFrame& frame){
+        
+        AelFrame temp = frame;
+        float mod = sin(modAngle);
+        modAngle += angleInc;
+        
+        delayLine.setDelayTime(delayTime + mod/1000);
+        
+        frame = (delayLine.read() * getWetLevel()) + temp * (1- getWetLevel());
+        
+        temp =  frame * feedBack + temp ;
+        
+        delayLine.write(temp);
+        
+        return frame;
+    }
+    
 
+    
+    
+//////////////////////AELREVERB
+    
+    AelFrame& AelReverb::processFrame(AelFrame& iFrame){
+        
+        
+        AelFrame aux1 = iFrame, aux2 = iFrame, aux3 = iFrame, aux4 = iFrame, temp = iFrame;
+        
+        C1.processFrame(aux1);
+        C2.processFrame(aux2);
+        C3.processFrame(aux3);
+        C4.processFrame(aux4);
+        
+        iFrame = (aux1 * 0.25) + (aux2 * 0.25) + (aux3 * 0.25) + (aux4 * 0.25);
+        
+        A1.processFrame(iFrame);
+        A2.processFrame(iFrame);
+        
+        iFrame = iFrame * getWetLevel() + temp * (1 - getWetLevel());
+        
+        return iFrame;
+        
+    }
+
+    
 }
