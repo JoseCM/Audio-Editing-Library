@@ -3,10 +3,11 @@
 
 #include "AelEffects.h"
 #include <cmath>
+#include "defines.h"
 
 namespace Ael {
-    
-    class AelDelayLine
+	
+	class AelDelayLine
 	{
 	public:
 		AelDelayLine(float delayTime, float sampleRate = 44100, int n_ch = 2) : maxDelayLen(delayTime*sampleRate + 1), sampleRate(sampleRate), channels(n_ch), delay(maxDelayLen, AelFrame(n_ch)) { }   // time in seconds
@@ -14,13 +15,13 @@ namespace Ael {
 		virtual AelFrame read() = 0;
 		virtual AelFrame readWrite(AelFrame&) = 0;
 		virtual ~AelDelayLine() { }
-        
+		
 	protected:
-        int sampleRate;
+		int sampleRate;
 		int maxDelayLen;
 		int channels;
 		vector<AelFrame> delay;
-        
+		
 	};
 
 	class AelFixDelayLine : public AelDelayLine
@@ -43,7 +44,7 @@ namespace Ael {
 		AelFrame read();
 		bool write(AelFrame&);
 		AelFrame readWrite(AelFrame&);
-        void setDelayTime(float delayTime);
+		void setDelayTime(float delayTime);
 
 	private:
 		float vdt;
@@ -57,12 +58,12 @@ namespace Ael {
 	public:
 		AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate = 44100, int n_ch = 2);
 		AelFrame& processFrame(AelFrame&);
-        void setBL(float);
-        void setFB(float);
-        void setFF(float);
-        float getBL();
-        float getFB();
-        float getFF();
+		void setBL(float);
+		void setFB(float);
+		void setFF(float);
+		float getBL();
+		float getFB();
+		float getFF();
 		~AelUniComb();
 	private:
 		AelFixDelayLine ucombdelay;
@@ -72,52 +73,67 @@ namespace Ael {
 		float FB;
 
 	};
-    
-    class AelFlanger : public AelEffect {
-        
-        float delayTime;
-        float feedBack;
-        float modAngle;
-        float angleInc;
-        float LFOfreq;
-        AelVDelayLine delayLine;
-        
-    public:
-        
-        AelFlanger(float delay, float feedback,  int n_chan = 2, int samplerate = 44100) : AelEffect(samplerate), delayLine(delay, delay + 0.001, sampleRate, n_chan) , delayTime(delay), feedBack(feedback), modAngle(0), angleInc(2 * M_PI *  1 / sampleRate), LFOfreq(1) { }
-    
-        void setDelayTime(float dt);
-        void setFeedBack(float fb);
-        void setLFOFreq(float freq);
-        
-        float getDelayTime();
-        float getFeedBack();
-        float getLFOFreq();
-        
-        virtual AelFrame& processFrame(AelFrame&);
-        
-    };
-    
-    class AelReverb: public AelEffect{
-        float RVT;
-        AelUniComb C1;
-        AelUniComb C2;
-        AelUniComb C3;
-        AelUniComb C4;
-        AelUniComb A1;
-        AelUniComb A2;
-        
-    public:
-        AelReverb(float RVT_, int n_ch=2, int samplerate=44100);
-        void setRVT(float rvt);
-        float getRVT();
-        virtual AelFrame& processFrame(AelFrame& iFrame);
+	
+	class AelFlanger : public AelEffect {
+		
+		float delayTime;
+		float feedBack;
+		float modAngle;
+		float angleInc;
+		float LFOfreq;
+		AelVDelayLine delayLine;
+		
+	public:
+		
+		AelFlanger(float delay, float feedback,  int n_chan = 2, int samplerate = 44100) : AelEffect(samplerate), delayLine(delay, delay + 0.001, sampleRate, n_chan) , delayTime(delay), feedBack(feedback), modAngle(0), angleInc(2 * M_PI *  1 / sampleRate), LFOfreq(1) { }
+	
+		void setDelayTime(float dt);
+		void setFeedBack(float fb);
+		void setLFOFreq(float freq);
+		
+		float getDelayTime();
+		float getFeedBack();
+		float getLFOFreq();
+		
+		virtual AelFrame& processFrame(AelFrame&);
+		
+	};
+	
+	class AelReverb: public AelEffect{
+		float RVT;
+		AelUniComb C1;
+		AelUniComb C2;
+		AelUniComb C3;
+		AelUniComb C4;
+		AelUniComb A1;
+		AelUniComb A2;
+		
+	public:
+		AelReverb(float RVT_, int n_ch=2, int samplerate=44100);
+		void setRVT(float rvt);
+		float getRVT();
+		virtual AelFrame& processFrame(AelFrame& iFrame);
 
-       
-    
-    };
+	   
+	
+	};
+
+	class AelEcho : public AelEffect{
+	public:
+		AelEcho(float echo_time,float feedback, int n_ch = 2, int samplerate = 44100);
+		//void setECT(float ect);
+		//float getECT();
+		bool setFB(float fb);
+		float getFB();
+		virtual AelFrame& processFrame(AelFrame& iFrame);
+
+	private:
+		AelUniComb echodelay;
+
+	};
 
 
+	
 
 }
 

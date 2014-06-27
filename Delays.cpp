@@ -2,7 +2,7 @@
 #include "AelException.h"
 
 namespace Ael{
-    
+	
 	AelFixDelayLine::AelFixDelayLine(float time, float sampleRate, int n_ch) : AelDelayLine(time, sampleRate, n_ch), position_r(0), position_w(0)
 	{
 
@@ -43,9 +43,9 @@ namespace Ael{
 	{
 		if (vdt > maxDelayLen){ AelExecption("VariableDelay greater than MaxDelay"); }
 	}
-    
-    
-    
+	
+	
+	
 	AelFrame AelVDelayLine::read(){
 
 		float rp, frac;
@@ -78,13 +78,13 @@ namespace Ael{
 		write(iframe);
 		return out;
 	}
-    
-    void AelVDelayLine::setDelayTime(float delayTime){
-        
-        vdt = delayTime * sampleRate;
+	
+	void AelVDelayLine::setDelayTime(float delayTime){
+		
+		vdt = delayTime * sampleRate;
 		if (vdt > maxDelayLen){ AelExecption("VariableDelay greater than MaxDelay"); }
-        
-    }
+		
+	}
 
 
 
@@ -106,155 +106,178 @@ namespace Ael{
 
 		return out;
 	}
-    
-    void AelUniComb::setBL(float _BL){
-        BL = _BL;
-    }
-    
-    void AelUniComb::setFB(float _FB){
-        FB = _FB;
-    }
-    
-    void AelUniComb::setFF(float _FF){
-        FF = _FF;
-    }
-    
-    float AelUniComb::getBL(){
-        return BL;
-    }
-    
-    float AelUniComb::getFB(){
-        return FB;
-    }
-    
-    float AelUniComb::getFF(){
-        return FF;
-    }
+	
+	void AelUniComb::setBL(float _BL){
+		BL = _BL;
+	}
+	
+	void AelUniComb::setFB(float _FB){
+		FB = _FB;
+	}
+	
+	void AelUniComb::setFF(float _FF){
+		FF = _FF;
+	}
+	
+	float AelUniComb::getBL(){
+		return BL;
+	}
+	
+	float AelUniComb::getFB(){
+		return FB;
+	}
+	
+	float AelUniComb::getFF(){
+		return FF;
+	}
 
 	AelUniComb::~AelUniComb()
 	{}
-    
-    
+	
+	
 /////////////////////AELFLANGER
-    
-    void AelFlanger::setDelayTime(float dt){
-        
-        if(dt < 0 || dt > 15.00000001)
-            return;
-        
-        try {
-            delayLine.setDelayTime(dt);
-            delayTime = dt;
-        } catch (AelExecption&) {
-            
-        }
-        
-    }
-    
-    
-    void AelFlanger::setFeedBack(float fb){
-        
-        if(fb > 1.0 || fb < -1.0)
-            return;
-        
-        feedBack = fb;
-    }
-    
-    
-    void AelFlanger::setLFOFreq(float freq){
-        
-        if(freq < 0.1 || freq > 1.00001)
-            return;
-        
-        angleInc = 2 * M_PI *  freq / sampleRate;
-        
-        freq = freq;
-        
-    }
-    
-    float AelFlanger::getDelayTime(){
-        
-        return delayTime;
-        
-    }
-    
-    float AelFlanger::getFeedBack(){
-        return feedBack;
-    }
-    
-    float AelFlanger::getLFOFreq(){
-        return LFOfreq;
-    }
-    
-    AelFrame& AelFlanger::processFrame(AelFrame& frame){
-        
-        AelFrame temp = frame;
-        float mod = sin(modAngle);
-        modAngle += angleInc;
-        
-        delayLine.setDelayTime(delayTime + mod/1000);
-        
-        frame = (delayLine.read() * getWetLevel()) + temp * (1- getWetLevel());
-        
-        temp =  frame * feedBack + temp ;
-        
-        delayLine.write(temp);
-        
-        return frame;
-    }
-    
+	
+	void AelFlanger::setDelayTime(float dt){
+		
+		if(dt < 0 || dt > 15.00000001)
+			return;
+		
+		try {
+			delayLine.setDelayTime(dt);
+			delayTime = dt;
+		} catch (AelExecption&) {
+			
+		}
+		
+	}
+	
+	
+	void AelFlanger::setFeedBack(float fb){
+		
+		if(fb > 1.0 || fb < -1.0)
+			return;
+		
+		feedBack = fb;
+	}
+	
+	
+	void AelFlanger::setLFOFreq(float freq){
+		
+		if(freq < 0.1 || freq > 1.00001)
+			return;
+		
+		angleInc = 2 * M_PI *  freq / sampleRate;
+		
+		freq = freq;
+		
+	}
+	
+	float AelFlanger::getDelayTime(){
+		
+		return delayTime;
+		
+	}
+	
+	float AelFlanger::getFeedBack(){
+		return feedBack;
+	}
+	
+	float AelFlanger::getLFOFreq(){
+		return LFOfreq;
+	}
+	
+	AelFrame& AelFlanger::processFrame(AelFrame& frame){
+		
+		AelFrame temp = frame;
+		float mod = sin(modAngle);
+		modAngle += angleInc;
+		
+		delayLine.setDelayTime(delayTime + mod/1000);
+		
+		frame = (delayLine.read() * getWetLevel()) + temp * (1- getWetLevel());
+		
+		temp =  frame * feedBack + temp ;
+		
+		delayLine.write(temp);
+		
+		return frame;
+	}
+	
 
-    
-    
+	
+	
 //////////////////////AELREVERB
-    
-    AelReverb::AelReverb(float RVT_, int n_ch, int samplerate): AelEffect(samplerate), RVT(RVT_),
-        C1(0.0297, 0, pow(0.001, 0.0297/RVT_), 1, samplerate, n_ch),
-        C2(0.0371, 0, pow(0.001, 0.0371/RVT_), 1, samplerate, n_ch),
-        C3(0.0411, 0, pow(0.001, 0.0411/RVT_), 1, samplerate, n_ch),
-        C4(0.0437, 0, pow(0.001, 0.0437/RVT_), 1, samplerate, n_ch),
-        A1(0.09683, pow(0.001, 0.09683/0.005), -pow(0.001, 0.09683/0.005), 1, samplerate, n_ch),
-        A2(0.03292, pow(0.001, 0.03292/0.0017), -pow(0.001, 0.03292/0.0017), 1, samplerate, n_ch)
-    {
-        
-    }
-    
+	
+	AelReverb::AelReverb(float RVT_, int n_ch, int samplerate): AelEffect(samplerate), RVT(RVT_),
+		C1(0.0297, 0, pow(0.001, 0.0297/RVT_), 1, samplerate, n_ch),
+		C2(0.0371, 0, pow(0.001, 0.0371/RVT_), 1, samplerate, n_ch),
+		C3(0.0411, 0, pow(0.001, 0.0411/RVT_), 1, samplerate, n_ch),
+		C4(0.0437, 0, pow(0.001, 0.0437/RVT_), 1, samplerate, n_ch),
+		A1(0.09683, pow(0.001, 0.09683/0.005), -pow(0.001, 0.09683/0.005), 1, samplerate, n_ch),
+		A2(0.03292, pow(0.001, 0.03292/0.0017), -pow(0.001, 0.03292/0.0017), 1, samplerate, n_ch)
+	{
+		
+	}
+	
 
-    void AelReverb::setRVT(float rvt){
-        
-        RVT = rvt;
-        
-        C1.setFB(pow(0.001, 0.0297/RVT));
-        C2.setFB(pow(0.001, 0.0371/RVT));
-        C3.setFB(pow(0.001, 0.0411/RVT));
-        C4.setFB(pow(0.001, 0.0437/RVT));
-    }
-    
-    
-    float AelReverb::getRVT(){
-        return RVT;
-    }
-    
-    AelFrame& AelReverb::processFrame(AelFrame& iFrame){
-        
-        
-        AelFrame aux1 = iFrame, aux2 = iFrame, aux3 = iFrame, aux4 = iFrame, temp = iFrame;
-        
-        C1.processFrame(aux1);
-        C2.processFrame(aux2);
-        C3.processFrame(aux3);
-        C4.processFrame(aux4);
-        
-        iFrame = (aux1 * 0.25) + (aux2 * 0.25) + (aux3 * 0.25) + (aux4 * 0.25);
-        
-        A1.processFrame(iFrame);
-        A2.processFrame(iFrame);
-        
-        iFrame = iFrame * getWetLevel() + temp * (1 - getWetLevel());
-        
-        return iFrame;
-        
-    }
+	void AelReverb::setRVT(float rvt){
+		
+		RVT = rvt;
+		
+		C1.setFB(pow(0.001, 0.0297/RVT));
+		C2.setFB(pow(0.001, 0.0371/RVT));
+		C3.setFB(pow(0.001, 0.0411/RVT));
+		C4.setFB(pow(0.001, 0.0437/RVT));
+	}
+	
+	
+	float AelReverb::getRVT(){
+		return RVT;
+	}
+	
+	AelFrame& AelReverb::processFrame(AelFrame& iFrame){
+		
+		
+		AelFrame aux1 = iFrame, aux2 = iFrame, aux3 = iFrame, aux4 = iFrame, temp = iFrame;
+		
+		C1.processFrame(aux1);
+		C2.processFrame(aux2);
+		C3.processFrame(aux3);
+		C4.processFrame(aux4);
+		
+		iFrame = (aux1 * 0.25) + (aux2 * 0.25) + (aux3 * 0.25) + (aux4 * 0.25);
+		
+		A1.processFrame(iFrame);
+		A2.processFrame(iFrame);
+		
+		iFrame = iFrame * getWetLevel() + temp * (1 - getWetLevel());
+		
+		return iFrame;
+		
+	}
 
-    
+	
+
+////////////////////////AELECHO
+
+	AelEcho::AelEcho(float echo_time, float feedback, int n_ch, int samplerate) : AelEffect(samplerate), echodelay(echo_time, 0, feedback, 1, samplerate, n_ch)
+	{}
+
+	bool  AelEcho::setFB(float fb){
+
+		if (fb < 5 || fb > 95) return false;
+		echodelay.setFB(fb);
+		return true;
+	}
+
+	float AelEcho::getFB(){
+		return echodelay.getFB();
+	}
+
+	AelFrame& AelEcho::processFrame(AelFrame& iFrame){
+		return echodelay.processFrame(iFrame);
+	}
+
+	
+
 }
