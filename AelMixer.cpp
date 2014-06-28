@@ -33,7 +33,7 @@ namespace Ael {
     
     void AelVolume::setVolumeDb(double voldb){
         
-        if(voldb > 6 || voldb < 70) return;
+        if(voldb > 6 || voldb < -70) return;
         
         volume = pow(10, voldb/20);
         

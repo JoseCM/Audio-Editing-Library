@@ -72,7 +72,6 @@ namespace Ael{
 			return false;
 		}
     
-        
         //if(audioFstream.tellp() != sizeof(int) * STREAM_LEN)
         //   audioFstream.seekp(0, ios_base::end); // prcber se fica a apontar para o end of file, antes ou depois !!!
         
@@ -91,7 +90,6 @@ namespace Ael{
 
 		try{
 			aux_vector = new int[STREAM_LEN];
-            
             
 			audioFstream.seekg(0, ios_base::beg);
             audioFstream.read(reinterpret_cast<char*>(aux_vector), sizeof(int) * STREAM_LEN);
@@ -131,6 +129,12 @@ namespace Ael{
         return new_frame;
 		
 	}
+    
+    void AelAudioStream::rewind(){
+        //audioFstream.seekp(ios_base::beg);
+        audioFstream.seekg(ios_base::beg);
+        currPosition = 0;
+    }
 
 	AelAudioStream::~AelAudioStream() {
     
@@ -138,13 +142,15 @@ namespace Ael{
         
         
         if(remove(to_string(streamID).c_str())){ //ATENÇAO COLOCAR PROTEÇOES
-            cout << "nao foi possivel apagar o ficheiro " << to_string(streamID).c_str() << endl;
+            //cout << "nao foi possivel apagar o ficheiro " << to_string(streamID).c_str() << endl;
         }
-        else
-            cout << "ficheiro apagado com sucesso " << to_string(streamID).c_str() << endl;
+        //else
+            //cout << "ficheiro apagado com sucesso " << to_string(streamID).c_str() << endl;
         
         
     }
+    
+    
     
 	//////////////////////////////////////////////
 	// AELFRAME
@@ -248,12 +254,12 @@ namespace Ael{
         
         for(int i = 0; i < n_channels; i++){
             
-            tempsample = samples[i] + to[i];
+            tempsample = static_cast<long>(samples[i]) + to[i];
             
             if(abs(tempsample) <= MAX_SAMPLE_VALUE)
                 frame.samples[i] = static_cast<int>(tempsample);
             
-            else if(frame.samples[i] < 0)
+            else if(tempsample < 0)
                 frame.samples[i] = - MAX_SAMPLE_VALUE;
             
             else
@@ -276,12 +282,12 @@ namespace Ael{
         
         for(int i = 0; i < n_channels; i++){
             
-            tempsample = samples[i] - to[i];
+            tempsample = static_cast<long>(samples[i])  - to[i];
             
             if(abs(tempsample) <= MAX_SAMPLE_VALUE)
                 frame.samples[i] = static_cast<int>(tempsample);
             
-            else if(frame[i] < 0)
+            else if(tempsample < 0)
                 frame.samples[i] = - MAX_SAMPLE_VALUE;
             
             else
@@ -301,12 +307,12 @@ namespace Ael{
 
 		for (int i = 0; i < n_channels; i++){
             
-            tempsample = samples[i] * gain;
+            tempsample = static_cast<long>(samples[i])  * gain;
             
             if(abs(tempsample) <= MAX_SAMPLE_VALUE)
                 frame.samples[i] = static_cast<int>(tempsample);
             
-            else if(frame[i] < 0)
+            else if(tempsample < 0)
                 frame.samples[i] = - MAX_SAMPLE_VALUE;
             
             else

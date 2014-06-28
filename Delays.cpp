@@ -100,9 +100,8 @@ namespace Ael{
 		AelFrame xh(channels), delayout = ucombdelay.read();
 
 		xh = iframe + delayout * FB; // xh = in + delay*FB
-		out = delayout * FF + xh * BL; // out = delay*FF + xh*BL
+		out = (delayout * FF + xh * BL) * getWetLevel() + iframe * (1- getWetLevel()); // out = delay*FF + xh*BL
 		ucombdelay.write(xh); //delay = xh
-
 
 		return out;
 	}
@@ -171,6 +170,11 @@ namespace Ael{
 		freq = freq;
 		
 	}
+    
+    void AelFlanger::setDepth(float dp){
+        depth = dp;
+    }
+
 	
 	float AelFlanger::getDelayTime(){
 		
@@ -185,6 +189,10 @@ namespace Ael{
 	float AelFlanger::getLFOFreq(){
 		return LFOfreq;
 	}
+    
+    float AelFlanger::getDepth(){
+        return depth;
+    }
 	
 	AelFrame& AelFlanger::processFrame(AelFrame& frame){
 		
@@ -192,7 +200,7 @@ namespace Ael{
 		float mod = sin(modAngle);
 		modAngle += angleInc;
 		
-		delayLine.setDelayTime(delayTime + mod/1000);
+		delayLine.setDelayTime(delayTime + (mod * depth));
 		
 		frame = (delayLine.read() * getWetLevel()) + temp * (1- getWetLevel());
 		
@@ -216,7 +224,7 @@ namespace Ael{
 		A1(0.09683, pow(0.001, 0.09683/0.005), -pow(0.001, 0.09683/0.005), 1, samplerate, n_ch),
 		A2(0.03292, pow(0.001, 0.03292/0.0017), -pow(0.001, 0.03292/0.0017), 1, samplerate, n_ch)
 	{
-		
+
 	}
 	
 
@@ -260,7 +268,7 @@ namespace Ael{
 
 ////////////////////////AELECHO
 
-	AelEcho::AelEcho(float echo_time, float feedback, int n_ch, int samplerate) : AelEffect(samplerate), echodelay(echo_time, 0, feedback, 1, samplerate, n_ch)
+	AelEcho::AelEcho(float echo_time, float feedback, int n_ch, int samplerate) : AelEffect(samplerate), echodelay(echo_time, 1, feedback, 0, samplerate, n_ch)
 	{}
 
 	bool  AelEcho::setFB(float fb){

@@ -81,19 +81,23 @@ namespace Ael {
 		float modAngle;
 		float angleInc;
 		float LFOfreq;
+        float depth;
 		AelVDelayLine delayLine;
 		
 	public:
 		
-		AelFlanger(float delay, float feedback,  int n_chan = 2, int samplerate = 44100) : AelEffect(samplerate), delayLine(delay, delay + 0.001, sampleRate, n_chan) , delayTime(delay), feedBack(feedback), modAngle(0), angleInc(2 * M_PI *  1 / sampleRate), LFOfreq(1) { }
+		AelFlanger(float delay, float feedback, float modFreq = 1.0, float depth_ = 0.001, int n_chan = 2, int samplerate = 44100) : AelEffect(samplerate), delayLine(delay, delay + depth_, sampleRate, n_chan) , delayTime(delay), feedBack(feedback), modAngle(0), angleInc(2 * M_PI *  1 / sampleRate), LFOfreq(modFreq), depth(depth_) {
+        }
 	
 		void setDelayTime(float dt);
 		void setFeedBack(float fb);
 		void setLFOFreq(float freq);
+        void setDepth(float dp);
 		
 		float getDelayTime();
 		float getFeedBack();
 		float getLFOFreq();
+        float getDepth();
 		
 		virtual AelFrame& processFrame(AelFrame&);
 		

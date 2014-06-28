@@ -68,6 +68,7 @@ namespace Ael {
 		AelFrame getNextFrame();
 		void SaveToFile(string);
         bool isEOS() { return eos; }
+        void rewind();
         //void toStereo();
         //void toMono();
 		virtual ~AelAudioStream();

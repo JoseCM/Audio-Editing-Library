@@ -17,13 +17,12 @@ namespace Ael {
     class AelCompressor: public AelEffect {
 
         double ratio;
-        double threshold;
-        double attack, release;
-        int prev_sample;
+        int threshold;
+        double thresholdDB, attack, release;
         
         public:
         
-        AelCompressor(double rt = 1.0, double th = 0.0, double atck = 0.005, double rls = 0.13);
+        AelCompressor(double rt = 1.0, double thdb = 0.0, double atck = 0.00001, double rls = 0.130, int samplerate = 44100);
         void setRatio(double ratio_);
         void setThreshold(double thresholddb);
         void setAttack(double attack_);
