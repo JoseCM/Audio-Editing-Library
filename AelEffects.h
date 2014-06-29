@@ -1,7 +1,6 @@
 #ifndef __AEL_EFFECTS__
 #define __AEL_EFFECTS__
 
-#include <string>
 #include "AelAudioBuf.h"
 
 using namespace std;

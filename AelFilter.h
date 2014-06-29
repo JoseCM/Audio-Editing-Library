@@ -9,10 +9,7 @@
 #ifndef __AEL__AelFilter__
 #define __AEL__AelFilter__
 
-#include <iostream>
 #include "AelEffects.h"
-#include "AelUtilities.h"
-#define pi 3.14159265359
 
 namespace Ael {
     

@@ -1,10 +1,6 @@
 
-#include <iostream>
-#include <cmath>
+
 #include "AelAudioBuf.h"
-#include "sndfile.hh"
-#include "AelException.h"
-#include "defines.h"
 
 
 namespace Ael{

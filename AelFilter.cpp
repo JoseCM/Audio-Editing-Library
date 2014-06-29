@@ -39,7 +39,7 @@ namespace Ael {
         
         ON = lowpass;
         
-        double x = exp(-2*pi * (cutoff/getSampleRate()));
+        double x = exp(-2*M_PI * (cutoff/getSampleRate()));
         coef_a[0] = 1.0 - x;
         coef_a[1] = 0.0;
         coef_b[0] = x;
@@ -49,7 +49,7 @@ namespace Ael {
         
         ON = highpass;
         
-        double x = exp(-2*pi * (cutoff/getSampleRate()));
+        double x = exp(-2*M_PI * (cutoff/getSampleRate()));
         coef_a[0]= ((1.0 + x) / 2.0);
         coef_a[1] = -coef_a[0];
         coef_b[0] = x;
@@ -102,7 +102,7 @@ namespace Ael {
         
         ON = lowpass;
         
-        float y = 1 / tan( (pi * cutoff) / getSampleRate() );
+        float y = 1 / tan( (M_PI * cutoff) / getSampleRate() );
         float pow_2 = pow(y, 2);
         
         coef_a[0] = 1 / ( 1 + (2 * y) + pow_2 ) ;
@@ -117,7 +117,7 @@ namespace Ael {
         
         ON = highpass;
         
-        float y = tan( (pi * cutoff) / getSampleRate() );
+        float y = tan( (M_PI * cutoff) / getSampleRate() );
         float pow_2 = pow(y, 2);
         
         coef_a[0] = 1 / ( 1 + (2 * y) + pow_2) ;
@@ -132,8 +132,8 @@ namespace Ael {
         
         ON = rejectband;
         
-        float y = tan( (pi * BandWidth) / getSampleRate() );
-        float Q = 2 * cos( (2 * pi * cutoff) / getSampleRate());
+        float y = tan( (M_PI * BandWidth) / getSampleRate() );
+        float Q = 2 * cos( (2 * M_PI * cutoff) / getSampleRate());
         
         coef_a[0] = 1/ (1 + y);
         coef_a[1] = - Q * coef_a[0];
@@ -147,8 +147,8 @@ namespace Ael {
         
         ON = bandpass;
         
-        float y = 1 / tan( (pi * BandWidth) / getSampleRate() );
-        float Q = 2 * cos( (2 * pi * cutoff) / getSampleRate());
+        float y = 1 / tan( (M_PI * BandWidth) / getSampleRate() );
+        float Q = 2 * cos( (2 * M_PI * cutoff) / getSampleRate());
         
         coef_a[0] = 1/ (1 + y);
         coef_a[1] = 0;

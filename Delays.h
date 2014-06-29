@@ -2,8 +2,6 @@
 #define __DELAYS__
 
 #include "AelEffects.h"
-#include <cmath>
-#include "defines.h"
 
 namespace Ael {
 	

@@ -13,6 +13,12 @@
 #include <limits>
 #include <exception>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <stdexcept>
+#include <vector>
+#include "sndfile.hh"
+
 
 #define MAX_SAMPLE_VALUE ( (pow(2.0, 32.0)/2) - 1 )
 
@@ -21,8 +27,6 @@
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
-
-#define pi 3.14159265359
 
 #define EQUAL(A, B) ( fabs(A-B) < std::numeric_limits<float>::epsilon())
 #define MORETHAN(A, B) ( fabs(A-B) > std::numeric_limits<float>::epsilon() && (A > B) )
@@ -33,6 +37,8 @@
 
 //////////////////////////////////////////////
 // AEL EXCEPTION
+
+using namespace std;
 
 namespace Ael{
     
