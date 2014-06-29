@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include "AelEffects.h"
-#include <cmath>
+#include "AelUtilities.h"
 #define pi 3.14159265359
 
 namespace Ael {
