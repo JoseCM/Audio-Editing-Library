@@ -19,6 +19,8 @@ namespace Ael {
     
     
     void AelFilter::set_gain(float gain){
+        if(gain < 0.0 || gain > 1.0 ) return;
+        
         this->gain = gain;
     }
     
@@ -55,6 +57,10 @@ namespace Ael {
     }
     
     void AelIIR::set_cutoff(float cutoff){
+        
+        if(cutoff < 0.0 || cutoff > (getSampleRate()/2) )
+            return;
+        
         this->cutoff = cutoff;
         
         if(ON == lowpass){
@@ -154,6 +160,9 @@ namespace Ael {
     
     void AelButterWorth::set_bandwidth(float BandWidth){
         
+        if(BandWidth < 0.0 || BandWidth > (getSampleRate()/2) )
+            return;
+        
         this->BandWidth = BandWidth;
         
         switch (ON) {
@@ -170,6 +179,9 @@ namespace Ael {
     }
     
     void AelButterWorth::set_cutoff(float cutoff){
+        
+        if(cutoff < 0.0 || cutoff > (getSampleRate()/2) )
+            return;
         
         this->cutoff = cutoff;
         

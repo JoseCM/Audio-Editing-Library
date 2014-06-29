@@ -11,6 +11,8 @@
 
 #include <cmath>
 #include <limits>
+#include <exception>
+#include <string>
 
 #define MAX_SAMPLE_VALUE ( (pow(2.0, 32.0)/2) - 1 )
 
@@ -24,9 +26,13 @@
 
 #define EQUAL(A, B) ( fabs(A-B) < std::numeric_limits<float>::epsilon())
 #define MORETHAN(A, B) ( fabs(A-B) > std::numeric_limits<float>::epsilon() && (A > B) )
-#define MORETHAN(A, B) ( fabs(A-B) > std::numeric_limits<float>::epsilon() && (A < B) )
+#define LESSTHAN(A, B) ( fabs(A-B) > std::numeric_limits<float>::epsilon() && (A < B) )
 #define LESSEQ(A, B) (EQUAL(A, B) || LESSTHAN(A, B))
 #define MOREEQ(A, B) (EQUAL(A, B) || MORETHAN(A, B))
+
+
+//////////////////////////////////////////////
+// AEL EXCEPTION
 
 namespace Ael{
     
