@@ -15,7 +15,7 @@ namespace Ael {
     *  AelFilter
     ************************************/
 
-    AelFilter::AelFilter(int sampleR, float gain_, float cutoff_) : AelEffect(sampleR), gain(gain_), cutoff(cutoff_) { }
+    AelFilter::AelFilter(float gain_, float cutoff_, int n_ch, int sampleR) : AelEffect(n_ch, sampleR), gain(gain_), cutoff(cutoff_) { }
     
     
     void AelFilter::set_gain(float gain){
@@ -27,7 +27,7 @@ namespace Ael {
      *  AelIIR - 1st Order
      ************************************/
     
-    AelIIR::AelIIR(int Sr, float G, float Coff ,int n_ch) : AelFilter(Sr, G, Coff) , out_1(n_ch), in_1(n_ch) {
+    AelIIR::AelIIR(float G, float Coff ,int n_ch, int Sr) : AelFilter(G, Coff, n_ch, Sr) , out_1(n_ch), in_1(n_ch) {
         coef_a.assign(2, 0.0);
         coef_b.assign(1, 0.0);
         set_LPF();  //defaut LPF
@@ -84,7 +84,7 @@ namespace Ael {
      *  ButterWorth - 2nd Order
      ************************************/
     
-    AelButterWorth::AelButterWorth(int Sr, float G, float Coff, int n_ch, float BW): AelFilter(Sr, G, Coff), out_1(n_ch), out_2(n_ch),
+    AelButterWorth::AelButterWorth(float G, float Coff, float BW, int n_ch, int Sr): AelFilter(G, Coff, n_ch, Sr), out_1(n_ch), out_2(n_ch),
     in_1(n_ch), in_2(n_ch), BandWidth(BW)
     {
         coef_a.assign(3, 0.0);
