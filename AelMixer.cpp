@@ -13,7 +13,7 @@
 
 namespace Ael {
     
-    //AEL VOLUME
+////////////////AEL VOLUME
     
     double AelVolume::getVolume() { return volume; }
     
@@ -65,8 +65,10 @@ namespace Ael {
     }
     
     
-    //AELPANNING
+//////////////AELPANNER
+    
     //SÓ TEM SUPORTE PARA MONO E STEREO
+    
     double AelPanner::getPan(){
         return pan;
     }
@@ -95,21 +97,8 @@ namespace Ael {
         
         return frame;
     }
-    
-    list<AelChannel*>::iterator AelMixer::findChannel(const int &channelID){
-        
-        for(list<AelChannel*>::iterator it = channel_list.begin(); it != channel_list.end(); it++){
-            
-            if((*it)->getID() == channelID){
-                return it;
-            }
-            
-        }
-        
-        return channel_list.end();
-        
-    }
-    
+
+/////////////////AELCHANNEL
     
     AelFrame AelChannel::getNextFrame(){
         
@@ -161,12 +150,15 @@ namespace Ael {
     }
     
     
-    int AelMixer::addChannel(const string &filename){
+    
+//////////////AELMIXER
+    
+    AelChannel* AelMixer::addChannel(const string &filename){
         
         AelChannel *newchannel = new AelChannel(filename, m_nChannels++);
         channel_list.push_back(newchannel);
         
-        return newchannel->getID();
+        return newchannel;
         
     }
     
@@ -178,6 +170,20 @@ namespace Ael {
             return NULL;
         
         return *it;
+        
+    }
+    
+    list<AelChannel*>::iterator AelMixer::findChannel(const int &channelID){
+        
+        for(list<AelChannel*>::iterator it = channel_list.begin(); it != channel_list.end(); it++){
+            
+            if((*it)->getID() == channelID){
+                return it;
+            }
+            
+        }
+        
+        return channel_list.end();
         
     }
     
@@ -217,7 +223,14 @@ namespace Ael {
                 new_frame = new_frame + channel->getNextFrame();
         }
         
-
+        for( AelEffect* &effect : master_effects )
+            if(effect->isOn())
+                effect->processFrame(new_frame);
+        
+        masterPan.processFrame(new_frame);
+        masterVolDb.processFrame(new_frame);
+        
+        
         return new_frame;
         
     }
@@ -238,6 +251,8 @@ namespace Ael {
             for(AelChannel* &channel : channel_list){
                 if(!(channel->isEOC())){
                     tempframe = tempframe + channel->getNextFrame();
+                    masterPan.processFrame(tempframe);
+                    masterVolDb.processFrame(tempframe);
                     endflag = false;
                 }
             }

@@ -42,7 +42,6 @@ using namespace std;
 
 namespace Ael{
     
-    
 	class AelExecption : public exception{
 	private:
 		string name;

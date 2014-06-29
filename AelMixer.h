@@ -67,20 +67,26 @@ namespace Ael {
         
         AelChannel(const string &fileName, int ID) : stream(fileName), volume(0.5), panner(0), onoff(true), name(fileName),
         channel_ID(ID), eoc(false) { }
+        
         void setVolumeDb(double volDb) { volume.setVolumeDb(volDb); }
         void setPan(double pan){ panner.setPan(pan); }
         double getVolumeDb() { return volume.getVolume(); }
         double getPan() { return panner.getPan(); }
+        
         void turnOn() { onoff = true; }
         void turnOff() { onoff = false; }
         bool isOn() { return onoff; }
+        
         int getID() { return channel_ID; }
         string getName() { return name; }
         void setName(string newname) { name = newname; }
+        
         int addEffect(AelEffect &effect) { effectChain.push_back(&effect); return effect.getId();}
         bool removeEffect(int effectId);
         AelEffect* getEffect(int effectId);
+        
         AelFrame getNextFrame();
+        
         bool isEOC(){ return eoc; }
         
     };
@@ -91,19 +97,30 @@ namespace Ael {
     public:
         
         AelMixer() : m_nChannels(0), masterVolDb(1.0), masterPan(0.0) { }
-        int addChannel(const string &filename);
-        //outras formas de adicionar canais (vazios, associados a geradores de sinal, etc(?))
+        
+        AelChannel* addChannel(const string &filename);
         AelChannel* getChannel(const int &channelID);
         bool removeChannel(const int &channelID);
+        
+        //void addEffect(int channelID, AelEffect &effect);
+        
         AelFrame getNextFrame();
         AelAudioStream* getFullMix();
         
-        //void addEffect(int channelID, AelEffect &effect);
+        
+        AelEffect* getEffect(int effectId);
+        int addEffect(AelEffect &effect) { master_effects.push_back(&effect); return effect.getId();}
+        
+        void setVolumeDb(double volDb) { masterVolDb.setVolumeDb(volDb); }
+        void setPan(double pan){ masterPan.setPan(pan); }
+        double getVolumeDb() { return masterVolDb.getVolume(); }
+        double getPan() { return masterPan.getPan(); }
         
     private:
         
         int m_nChannels;
         list<AelChannel*> channel_list;
+        list<AelEffect*> master_effects;
         AelVolume masterVolDb;
         AelPanner masterPan;
         list<AelChannel*>::iterator findChannel(const int &channelID);
