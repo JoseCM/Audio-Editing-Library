@@ -21,16 +21,15 @@
 
 
 #define MAX_SAMPLE_VALUE ( (pow(2.0, 32.0)/2) - 1 )
-
 #define STREAM_LEN  ((m_nframes) * (channels))
 
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
 
-#define EQUAL(A, B) ( fabs(A-B) < std::numeric_limits<float>::epsilon())
-#define MORETHAN(A, B) ( fabs(A-B) > std::numeric_limits<float>::epsilon() && (A > B) )
-#define LESSTHAN(A, B) ( fabs(A-B) > std::numeric_limits<float>::epsilon() && (A < B) )
+#define EQUAL(A, B) ( fabs((A)-(B)) < std::numeric_limits<float>::epsilon())
+#define MORETHAN(A, B) ( fabs((A)-(B)) > std::numeric_limits<float>::epsilon() && (A > B) )
+#define LESSTHAN(A, B) ( fabs((A)-(B)) > std::numeric_limits<float>::epsilon() && (A < B) )
 #define LESSEQ(A, B) (EQUAL(A, B) || LESSTHAN(A, B))
 #define MOREEQ(A, B) (EQUAL(A, B) || MORETHAN(A, B))
 

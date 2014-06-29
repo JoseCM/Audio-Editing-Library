@@ -7,18 +7,101 @@
 //
 
 #include "AelDynamicEffect.h"
-#include "defines.h"
-#include <cmath>
-
-
 
 namespace Ael {
+    
+////////////////AEL VOLUME
+    
+    double AelVolume::getVolume() { return volume; }
+    
+    void AelVolume::setVolume(double vol) {
+        
+        if(MORETHAN(vol, 2.0))
+            volume = 2.0;
+        
+        else if (LESSTHAN(vol, 0.0))
+            volume = 0.0;
+        
+        else
+            volume = vol;
+    }
+    
+    double AelVolume::getVolumeDb(){
+        
+        if(EQUAL(volume, 0)) return -70.0;
+        
+        else return 20.0 * log(volume);
+    }
+    
+    void AelVolume::setVolumeDb(double voldb){
+        
+        double dbvalue = 0.0;
+        
+        if(MORETHAN(voldb, 2.0))
+            dbvalue = 6.0;
+        
+        else if (LESSTHAN(voldb, -70.0))
+            dbvalue = 0.0;
+        
+        else
+            dbvalue = voldb;
+        
+        volume = pow(10, dbvalue/20);
+        
+    }
+    
+    AelFrame& AelVolume::processFrame(AelFrame& frame){
+        
+        frame= frame * volume;
+        
+        return frame;
+    }
+    
+    
+//////////////AELPANNER
+    
+    //SÓ TEM SUPORTE PARA MONO E STEREO
+    
+    double AelPanner::getPan(){
+        return pan;
+    }
+    
+    void AelPanner::setPan(double pan){
+        
+        if(LESSTHAN(pan, -1.0))
+            this->pan = -1.0;
+        
+        else if(MORETHAN(pan, 1.0))
+            this->pan = 1.0;
+        
+        else
+            this->pan = pan;
+        
+        
+        panright = (sin((1 + this->pan) / 2.0 * M_PI / 2.0));
+        panleft =  (sin((1 - this->pan) / 2.0 * M_PI / 2.0));
+        
+    }
+    
+    AelFrame& AelPanner::processFrame(AelFrame &frame){
+        
+        if(frame.getChannels() > 2)
+            return frame;
+        
+        frame.toStereo();
+        
+        frame[0] *= panleft;
+        frame[1] *= panright;
+        
+        return frame;
+    }
+
     
     
 ////////////////AELCOMPRESSOR
 
-    AelCompressor::AelCompressor(double rt, double thdb, double atck, double rls, int samplerate)
-        : AelEffect(samplerate){
+    AelCompressor::AelCompressor(double rt, double thdb, double atck, double rls, int n_chn , int samplerate)
+        : AelEffect(n_chn, samplerate){
         
             setRatio(rt);
             setThreshold(thdb);
@@ -120,7 +203,7 @@ namespace Ael {
     
 ////////////AELGATE
     
-    AelGate::AelGate(double thdb,  double att, double atck, double rls, int samplerate) : AelEffect(samplerate){
+    AelGate::AelGate(double thdb,  double att, double atck, double rls, int n_chn ,int samplerate) : AelEffect(n_chn, samplerate){
         
         setThreshold(thdb);
         setAttenuation(att);
@@ -128,7 +211,6 @@ namespace Ael {
         setRelease(rls);
         
     }
-    
     
     void AelGate::setThreshold(double thresholddb){
         
@@ -197,14 +279,11 @@ namespace Ael {
         static int prev_sample = 0;
         int peak;
         int sample = abs(frame.maxSample());
-        
-        //Envelope generation stage
+
         if(sample >= prev_sample){
             peak = attack * prev_sample + (1-attack) * sample;
         } else {
             peak = release * prev_sample + (1-release) * sample;
-            //OR
-            //peak = release * prev_sample;
         }
         
         prev_sample = peak;

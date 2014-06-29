@@ -9,45 +9,11 @@
 #ifndef __AudioEditingLibrary__AelMixer__
 #define __AudioEditingLibrary__AelMixer__
 
-#include <iostream>
-#include <list>
-#include "AelAudioBuf.h"
 #include "AelEffects.h"
+#include "AelDynamicEffect.h"
+#include <list>
 
 namespace Ael {
-    
-
-    class AelVolume : public AelEffect  {
-        
-    private:
-        double volume;
-        
-    public:
-        AelVolume(double gain = 0.5) : volume(gain) { }
-        double getVolume();
-        void setVolume(double);
-        double getVolumeDb();
-        void setVolumeDb(double);
-        
-        AelFrame& processFrame(AelFrame&);
-    };
-
-    class AelPanner : public AelEffect {
-        
-    private:
-        double pan;
-        double panright;
-        double panleft;
-        
-    public:
-        AelPanner(double pan = 0.0) : pan(pan), panright( (1 + pan) / 2.0 ), panleft((1 - pan) / 2.0 ) { }
-        double getPan();
-        void setPan(double);
-        
-        AelFrame& processFrame(AelFrame&);
-
-    };
-
     
     class AelChannel {
         
@@ -70,7 +36,7 @@ namespace Ael {
         
         void setVolumeDb(double volDb) { volume.setVolumeDb(volDb); }
         void setPan(double pan){ panner.setPan(pan); }
-        double getVolumeDb() { return volume.getVolume(); }
+        double getVolumeDb() { return volume.getVolumeDb(); }
         double getPan() { return panner.getPan(); }
         
         void turnOn() { onoff = true; }
@@ -86,6 +52,7 @@ namespace Ael {
         AelEffect* getEffect(int effectId);
         
         AelFrame getNextFrame();
+        AelAudioStream* getFullyProcessed();
         
         bool isEOC(){ return eoc; }
         
@@ -96,7 +63,7 @@ namespace Ael {
         
     public:
         
-        AelMixer() : m_nChannels(0), masterVolDb(1.0), masterPan(0.0) { }
+        AelMixer() : m_nChannels(0), masterVolDb(1.0), masterPan(0.0), m_nMaxFrames(0), currPos(0) { }
         
         AelChannel* addChannel(const string &filename);
         AelChannel* getChannel(const int &channelID);
@@ -107,13 +74,20 @@ namespace Ael {
         AelFrame getNextFrame();
         AelAudioStream* getFullMix();
         
-        
         AelEffect* getEffect(int effectId);
         int addEffect(AelEffect &effect) { master_effects.push_back(&effect); return effect.getId();}
         
+        void setPosMsec(int mseg);
+        int getPosMsec() { return static_cast<float>(currPos) * 1000.0 / 44100.0; }
+        void setPosFrames(int nframe);
+        int getPosFrames() { return currPos; }
+        
+        int getLengthMsec() { return static_cast<float>(m_nMaxFrames) * 1000.0 / 44100.0; }
+        int getLengthFrames() { return m_nMaxFrames; }
+        
         void setVolumeDb(double volDb) { masterVolDb.setVolumeDb(volDb); }
         void setPan(double pan){ masterPan.setPan(pan); }
-        double getVolumeDb() { return masterVolDb.getVolume(); }
+        double getVolumeDb() { return masterVolDb.getVolumeDb(); }
         double getPan() { return masterPan.getPan(); }
         
     private:
@@ -123,6 +97,8 @@ namespace Ael {
         list<AelEffect*> master_effects;
         AelVolume masterVolDb;
         AelPanner masterPan;
+        int m_nMaxFrames;
+        int currPos;
         list<AelChannel*>::iterator findChannel(const int &channelID);
     };
     

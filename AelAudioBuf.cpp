@@ -6,7 +6,7 @@
 namespace Ael{
 
 	//////////////////////////////////////////////
-	// AUDIO BUFFER
+	// AUDIO STREAM
     
     int AelAudioStream::ID = 0;
 
@@ -34,10 +34,10 @@ namespace Ael{
 			aux_vector = new int[STREAM_LEN];
 			file.readf(aux_vector, m_nframes);
 
-			peek = 0;
+			peak = 0;
 
 			for (int i = 0; i < STREAM_LEN; i++){
-				if (abs(aux_vector[i]) > peek) peek = abs(aux_vector[i]);
+				if (abs(aux_vector[i]) > peak) peak = abs(aux_vector[i]);
 			}
             
             audioFstream.write(reinterpret_cast<char*>(aux_vector), sizeof(int) * STREAM_LEN);
@@ -56,7 +56,7 @@ namespace Ael{
         
 	}
 
-	AelAudioStream::AelAudioStream(int nChannels, int nSampleRate) : streamID(ID++),  currPosition(0), channels(nChannels), sampleRate(nSampleRate), peek(0), m_nframes(0), eos(true){
+	AelAudioStream::AelAudioStream(int nChannels, int nSampleRate) : streamID(ID++),  currPosition(0), channels(nChannels), sampleRate(nSampleRate), peak(0), m_nframes(0), eos(true){
         
         audioFstream.open( std::to_string(streamID).c_str() , std::fstream::binary | std::fstream::in | std::fstream::out | std::fstream::trunc );
         
@@ -85,7 +85,9 @@ namespace Ael{
 		int* aux_vector;
 
 		try{
+            
 			aux_vector = new int[STREAM_LEN];
+            streampos current_pos = audioFstream.tellg();
             
 			audioFstream.seekg(0, ios_base::beg);
             audioFstream.read(reinterpret_cast<char*>(aux_vector), sizeof(int) * STREAM_LEN);
@@ -95,6 +97,7 @@ namespace Ael{
 			file.write(aux_vector, STREAM_LEN);
 
 			delete [] aux_vector;
+            audioFstream.seekg(current_pos);
     
 		}
         
@@ -107,7 +110,7 @@ namespace Ael{
 
 	AelFrame AelAudioStream::getNextFrame(){
 
-		if (m_nframes == currPosition){
+		if (eos){
 			//throw AelExecption("No more Frames");
             return AelFrame(channels);
 		}
@@ -126,11 +129,32 @@ namespace Ael{
 		
 	}
     
-    void AelAudioStream::rewind(){
-        //audioFstream.seekp(ios_base::beg);
-        audioFstream.seekg(ios_base::beg);
-        currPosition = 0;
+    void AelAudioStream::setCurrPosition(int pos){
+        
+        if(pos < 0)
+            return;
+        
+        else if(pos >= m_nframes){
+            audioFstream.seekg(audioFstream.end);
+            eos = true;
+        }
+    
+        else {
+            audioFstream.seekg(currPosition, audioFstream.beg);
+            currPosition = pos;
+            eos = false;
+        }
+        
     }
+    
+    
+    void AelAudioStream::rewind(){
+        audioFstream.seekg(audioFstream.beg);
+        currPosition = 0;
+        eos = false;
+    }
+    
+    
 
 	AelAudioStream::~AelAudioStream() {
     

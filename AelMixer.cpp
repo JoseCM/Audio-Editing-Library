@@ -6,97 +6,13 @@
 //  Copyright (c) 2014 José Martins. All rights reserved.
 //
 
+#include "AelUtilities.h"
+#include "AelEffects.h"
 #include "AelMixer.h"
-#include <cmath>
-#include "defines.h"
 
 
 namespace Ael {
     
-////////////////AEL VOLUME
-    
-    double AelVolume::getVolume() { return volume; }
-    
-    void AelVolume::setVolume(double vol) {
-        
-        if(vol > 2.0 || vol < 0) return;
-        
-        this->volume = vol;
-    }
-    
-    double AelVolume::getVolumeDb(){
-        
-        if(volume == 0) return -70.0;
-        
-        else return 20.0 * log(volume);
-    }
-    
-    void AelVolume::setVolumeDb(double voldb){
-        
-        if(voldb > 6 || voldb < -70) return;
-        
-        volume = pow(10, voldb/20);
-        
-    }
-    
-    AelFrame& AelVolume::processFrame(AelFrame& frame){
-        
-        long int tempsample = 0;
-        
-        for(int i = 0; i < frame.getChannels(); i++){
-            
-            if(frame[i] == 0) continue;
-            
-            tempsample = frame[i];
-            tempsample *= volume;
-            
-            if(abs(tempsample) <= MAX_SAMPLE_VALUE)
-                frame[i] = static_cast<int>(tempsample);
-            
-            else if(frame[i] < 0)
-                frame[i] = - MAX_SAMPLE_VALUE;
-            
-            else
-                frame[i] = MAX_SAMPLE_VALUE;
-            
-        }
-        
-        return frame;
-    }
-    
-    
-//////////////AELPANNER
-    
-    //SÓ TEM SUPORTE PARA MONO E STEREO
-    
-    double AelPanner::getPan(){
-        return pan;
-    }
-    
-    void AelPanner::setPan(double pan){
-        
-        if(pan < -1.0 || pan > 1.0)
-            return;
-        
-        this->pan = pan;
-        panright = (sin((1 + pan) / 2.0 * M_PI / 2.0));
-        panleft =  (sin((1 - pan) / 2.0 * M_PI / 2.0));
-        
-    }
-    
-    AelFrame& AelPanner::processFrame(AelFrame &frame){
-        
-        if(frame.getChannels() > 2)
-            return frame;
-        
-        
-        frame.toStereo();
-        
-        frame[0] *= panleft;
-        frame[1] *= panright;
-        
-        return frame;
-    }
 
 /////////////////AELCHANNEL
     
@@ -119,6 +35,24 @@ namespace Ael {
         
         return frame;
         
+    }
+    
+    AelAudioStream* AelChannel::getFullyProcessed(){
+        
+        AelAudioStream *new_stream = new AelAudioStream(2);
+        int init_pos = stream.getCurrPosition();
+        
+        stream.rewind();
+        
+        while(!eoc){
+            AelFrame frame = getNextFrame();
+            new_stream->AddFrames(frame);
+        }
+        
+        stream.setCurrPosition(init_pos);
+        
+        
+        return new_stream;
     }
     
     bool AelChannel::removeEffect(int effectId){
@@ -157,6 +91,9 @@ namespace Ael {
         
         AelChannel *newchannel = new AelChannel(filename, m_nChannels++);
         channel_list.push_back(newchannel);
+        
+        if(newchannel->stream.getnframes() > m_nMaxFrames)
+            m_nMaxFrames = newchannel->stream.getnframes();
         
         return newchannel;
         
@@ -208,10 +145,41 @@ namespace Ael {
         
         delete *it;
         channel_list.erase(it);
+        
+        m_nMaxFrames = 0;
+        
+        for(list<AelChannel*>::iterator iter = channel_list.begin(); iter != channel_list.end(); iter++){
+            
+            if((*iter)->stream.getnframes() > m_nMaxFrames)
+                m_nMaxFrames = (*iter)->stream.getnframes();
+            
+        }
+        
         return true;
         
     }
     
+    void AelMixer::setPosMsec(int mseg){
+        
+        int frame_pos = (static_cast<float>(mseg)/1000.0) * 44100;
+        
+        setPosFrames(frame_pos);
+        
+    }
+    
+    void AelMixer::setPosFrames(int nframe){
+        
+        if(nframe < 0)
+            return;
+        
+        for(list<AelChannel*>::iterator iter = channel_list.begin(); iter != channel_list.end(); iter++){
+            (*iter)->stream.setCurrPosition(nframe);
+            
+        }
+        
+        currPos = nframe;
+        
+    }
     
     
     AelFrame AelMixer::getNextFrame(){
@@ -230,12 +198,11 @@ namespace Ael {
         masterPan.processFrame(new_frame);
         masterVolDb.processFrame(new_frame);
         
+        currPos++;
         
         return new_frame;
         
     }
-    
-    
     
     AelAudioStream* AelMixer::getFullMix(){
         
@@ -261,10 +228,10 @@ namespace Ael {
                 fullmix->AddFrames(tempframe);
         }
         
+        setPosFrames(currPos);
+        
         return fullmix;
     }
-    
-    
     
 }
 

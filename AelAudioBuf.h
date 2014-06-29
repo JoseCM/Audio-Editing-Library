@@ -47,9 +47,9 @@ namespace Ael {
         fstream audioFstream;
         int streamID;
 		int currPosition;
-		int m_nframes;
+		int m_nframes;  
 		int channels;
-		int peek;
+		int peak;
 		int sampleRate;
         bool eos;
 
@@ -57,17 +57,26 @@ namespace Ael {
 		AelAudioStream(string);
 		AelAudioStream(int nChannels, int nSampleRate = 44100);
 		AelAudioStream(int nChannels, int nFrames, int nSampleRate = 44100);
+        
 		bool AddFrames(AelFrame&);
+        
 		int getnframes() { return m_nframes; }
 		int getchannels(){ return channels; }
-		int getpeek() { return peek; }
+		int getpeak() { return peak; }
 		int getsampleRate() { return sampleRate; }
+        
 		AelFrame getNextFrame();
+        
 		void SaveToFile(string);
-        bool isEOS() { return eos; }
+        
+        int getCurrPosition() { return currPosition; }
+        void setCurrPosition(int pos);
         void rewind();
+        bool isEOS() { return eos; }
+        
         //void toStereo();
         //void toMono();
+        
 		virtual ~AelAudioStream();
 		
 	};
