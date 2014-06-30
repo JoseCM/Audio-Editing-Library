@@ -18,10 +18,16 @@ namespace Ael {
     AelFilter::AelFilter(float gain_, float cutoff_, int n_ch, int sampleR) : AelEffect(n_ch, sampleR), gain(gain_), cutoff(cutoff_) { }
     
     
-    void AelFilter::set_gain(float gain){
-        if(gain < 0.0 || gain > 1.0 ) return;
+    void AelFilter::set_gain(float gain_){
         
-        this->gain = gain;
+        if(MORETHAN(gain_, 2.0))
+            gain = 1.0;
+        
+        else if (LESSTHAN(gain_, 0.0))
+            gain = 0.0;
+        
+        else
+            gain = gain_;
     }
     
     
@@ -56,12 +62,17 @@ namespace Ael {
         
     }
     
-    void AelIIR::set_cutoff(float cutoff){
+    void AelIIR::set_cutoff(float cutoff_){
         
-        if(cutoff < 0.0 || cutoff > (getSampleRate()/2) )
-            return;
+        if(MORETHAN(cutoff_, (getSampleRate()/2)))
+            cutoff = getSampleRate()/2 ;
         
-        this->cutoff = cutoff;
+        else if (LESSTHAN(cutoff_, 0.0))
+            cutoff = 0.0;
+        
+        else
+            this->cutoff = cutoff_;
+        
         
         if(ON == lowpass){
             set_LPF();
@@ -158,12 +169,16 @@ namespace Ael {
         
     }
     
-    void AelButterWorth::set_bandwidth(float BandWidth){
+    void AelButterWorth::set_bandwidth(float BandWidth_){
         
-        if(BandWidth < 0.0 || BandWidth > (getSampleRate()/2) )
-            return;
+        if(MORETHAN(BandWidth_, (getSampleRate()/2)))
+            BandWidth = getSampleRate()/2 ;
         
-        this->BandWidth = BandWidth;
+        else if (LESSTHAN(BandWidth_, 0.0))
+            BandWidth = 0.0;
+        
+        else
+            BandWidth = BandWidth_;
         
         switch (ON) {
             case rejectband:
@@ -178,12 +193,16 @@ namespace Ael {
 
     }
     
-    void AelButterWorth::set_cutoff(float cutoff){
+    void AelButterWorth::set_cutoff(float cutoff_){
         
-        if(cutoff < 0.0 || cutoff > (getSampleRate()/2) )
-            return;
+        if(MORETHAN(cutoff_, (getSampleRate()/2)))
+            cutoff = getSampleRate()/2 ;
         
-        this->cutoff = cutoff;
+        else if (LESSTHAN(cutoff_, 0.0))
+            cutoff = 0.0;
+        
+        else
+            this->cutoff = cutoff_;
         
         switch (ON) {
             case lowpass:
