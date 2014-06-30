@@ -73,7 +73,6 @@ namespace Ael {
         else
             this->cutoff = cutoff_;
         
-        
         if(ON == lowpass){
             set_LPF();
         }
@@ -95,6 +94,28 @@ namespace Ael {
         
         return Frame;
         
+    }
+    
+    AelEffect* AelIIR::getCopy(){
+        AelIIR *cp = new AelIIR(gain, cutoff, getNChannels(), getSampleRate());
+    
+        cp->out_1 = out_1;
+        cp->in_1 = in_1;
+        
+        cp->ON = ON;
+        
+        if(ON == lowpass){
+            cp->set_LPF();
+        }
+        else cp->set_HPF();
+        
+        cp->setWetLevel(getWetLevel());
+        
+        if(!isOn()){
+            cp->m_turnOff();
+        }
+    
+        return cp;
     }
     
     /************************************
@@ -139,9 +160,11 @@ namespace Ael {
         
     }
     
-    void AelButterWorth::set_BRF(){
+    void AelButterWorth::set_NOTCH(){
         
         ON = rejectband;
+        
+        BandWidth = 10000;
         
         float y = tan( (M_PI * BandWidth) / getSampleRate() );
         float Q = 2 * cos( (2 * M_PI * cutoff) / getSampleRate());
@@ -180,16 +203,8 @@ namespace Ael {
         else
             BandWidth = BandWidth_;
         
-        switch (ON) {
-            case rejectband:
-                set_BRF();
-                break;
-            case bandpass:
-                set_BPF();
-                break;
-            default:
-                break;
-        }
+        if(ON == rejectband)
+            set_BPF();
 
     }
     
@@ -212,7 +227,7 @@ namespace Ael {
                 set_HPF();
                 break;
             case rejectband:
-                set_BRF();
+                set_NOTCH();
                 break;
             case bandpass:
                 set_BPF();
@@ -239,6 +254,44 @@ namespace Ael {
         Frame = in * (1 - getWetLevel()) + (Frame * getWetLevel());   //dry/wet
         
         return Frame;
+        
+    }
+    
+    AelEffect* AelButterWorth::getCopy(){
+        AelButterWorth *cp = new AelButterWorth(gain, cutoff, BandWidth ,getNChannels(), getSampleRate());
+        
+        cp->out_1 = out_1;
+        cp->in_1 = in_1;
+        cp->out_2 = in_2;
+        cp->in_2 = in_2;
+        
+        cp->ON = ON;
+
+        switch (ON) {
+            case lowpass:
+                cp->set_LPF();
+                break;
+            case highpass:
+                cp->set_HPF();
+                break;
+            case rejectband:
+                cp->set_NOTCH();
+                break;
+            case bandpass:
+                cp->set_BPF();
+                break;
+            default:
+                break;
+        }
+        
+        cp->setWetLevel(getWetLevel());
+        
+        if(!isOn()){
+            cp->m_turnOff();
+        }
+        
+        
+        return cp;
         
     }
 }
