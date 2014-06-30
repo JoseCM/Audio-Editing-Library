@@ -50,6 +50,16 @@ namespace Ael {
         
     }
     
+    AelEffect* AelVolume::getCopy() {
+        
+        AelEffect *temp = new AelVolume(volume, n_channels, sampleRate);
+        temp->setWetLevel(wet_level);
+        if(!onoff)
+            temp->m_turnOff();
+        
+        return temp;
+    }
+    
     AelFrame& AelVolume::processFrame(AelFrame& frame){
         
         frame= frame * volume;
@@ -81,6 +91,16 @@ namespace Ael {
         panright = (sin((1 + this->pan) / 2.0 * M_PI / 2.0));
         panleft =  (sin((1 - this->pan) / 2.0 * M_PI / 2.0));
         
+    }
+    
+    AelEffect* AelPanner::getCopy() {
+        
+        AelEffect *temp = new AelPanner(pan, n_channels, sampleRate);
+        temp->setWetLevel(wet_level);
+        if(!onoff)
+            temp->m_turnOff();
+        
+        return temp;
     }
     
     AelFrame& AelPanner::processFrame(AelFrame &frame){
@@ -165,6 +185,16 @@ namespace Ael {
             release = exp(-1.0/(sampleRate*release_));
         
     
+    }
+    
+    AelEffect* AelCompressor::getCopy() {
+        
+        AelEffect *temp =  new AelCompressor(ratio, thresholdDB, getAttackTime(), getReleaseTime(), n_channels, sampleRate);
+        temp->setWetLevel(wet_level);
+        if(!onoff)
+            temp->m_turnOff();
+        
+        return temp;
     }
     
     AelFrame& AelCompressor::processFrame(AelFrame& frame){
@@ -273,6 +303,16 @@ namespace Ael {
             release = exp(-1.0/(sampleRate*release_));
         
         
+    }
+    
+    AelEffect* AelGate::getCopy() {
+        
+        AelEffect *temp =  new AelGate(thresholdDB, attenuationDB, getAttackTime(), getReleaseTime(), n_channels, sampleRate);
+        temp->setWetLevel(wet_level);
+        if(!onoff)
+            temp->m_turnOff();
+        
+        return temp;
     }
     
     AelFrame& AelGate::processFrame(AelFrame& frame){
