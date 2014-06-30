@@ -25,6 +25,7 @@ namespace Ael {
         double getVolumeDb();
         void setVolumeDb(double);
         
+        AelEffect* getCopy();
         AelFrame& processFrame(AelFrame&);
     };
     
@@ -40,6 +41,7 @@ namespace Ael {
         double getPan();
         void setPan(double);
         
+        AelEffect* getCopy();
         AelFrame& processFrame(AelFrame&);
         
     };
@@ -60,9 +62,10 @@ namespace Ael {
         
         double getRatio() { return ratio; }
         double getThreshold() { return thresholdDB; }
-        double getAttackTime() { return attack; }
-        double getReleaseTime() { return release; }
+        double getAttackTime() { return -1.0/(log(attack)*sampleRate); }
+        double getReleaseTime() { return -1.0/(log(release)*sampleRate); }
         
+        virtual AelEffect* getCopy();
         virtual AelFrame& processFrame(AelFrame&);
         
     };
@@ -85,9 +88,10 @@ namespace Ael {
         
         double getAttenuation() { return attenuationDB; }
         double getThreshold() { return thresholdDB; }
-        double getAttackTime() { return attack; }
-        double getReleaseTime() { return release; }
+        double getAttackTime() { return - 1.0/(log(attack)*sampleRate); }
+        double getReleaseTime() { return - 1.0/(log(release)*sampleRate); }
         
+        virtual AelEffect* getCopy();
         virtual AelFrame& processFrame(AelFrame&);
     };
     

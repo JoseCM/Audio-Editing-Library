@@ -26,7 +26,6 @@ namespace Ael {
         AelFrame frame = stream.getNextFrame();
         
         for( AelEffect* &effect : effectChain )
-            
             if(effect->isOn())
                 effect->processFrame(frame);
         
@@ -43,17 +42,34 @@ namespace Ael {
     AelAudioStream* AelChannel::getFullyProcessed(){
         
         AelAudioStream *new_stream = new AelAudioStream(2);
-        int init_pos = stream.getCurrPosition();
+        list<AelEffect*> temp_list;
         
+        int init_pos = stream.getCurrPosition();
         stream.rewind();
         
-        while(!eoc){
-            AelFrame frame = getNextFrame();
+        for(auto it = effectChain.begin(); it != effectChain.end(); it++)
+            temp_list.push_back((*it)->getCopy());
+        
+
+        for(int i = 0; i < stream.getnframes(); i++){
+            
+            AelFrame frame = stream.getNextFrame();
+            
+            for( AelEffect* &effect : temp_list)
+                if(effect->isOn())
+                    effect->processFrame(frame);
+            
+            panner.processFrame(frame);
+            volume.processFrame(frame);
+            
             new_stream->AddFrames(frame);
+            
         }
         
         stream.setCurrPosition(init_pos);
         
+        for(auto it = temp_list.begin(); it != temp_list.end(); it++)
+            delete *it;
         
         return new_stream;
     }
@@ -213,24 +229,44 @@ namespace Ael {
     
     AelAudioStream* AelMixer::getFullMix(){
         
+        
+        list<AelAudioStream*> stream_list;
+        list<AelEffect*> effect_list;
         AelAudioStream *fullmix = new AelAudioStream(2);
+        
         int pos = getPosFrames();
         bool endflag = false;
         
         setPosFrames(0);
+        
+        for(AelChannel* &channel : channel_list)
+            stream_list.push_back(channel->getFullyProcessed());
+        
+        for(auto it = master_effects.begin(); it != master_effects.end(); it++)
+            effect_list.push_back((*it)->getCopy());
         
         while(!endflag){
             
             endflag = true;
             AelFrame tempframe(2);
             
-            for(AelChannel* &channel : channel_list){
-                if(!(channel->isEOC())){
-                    tempframe = tempframe + channel->getNextFrame();
+            for(AelAudioStream* &stream : stream_list){
+                
+                if(!(stream->isEOS())){
+                    
+                    tempframe = tempframe + stream->getNextFrame();
+                    
+                    for( AelEffect* &effect : master_effects)
+                        if(effect->isOn())
+                            effect->processFrame(tempframe);
+                    
                     masterPan.processFrame(tempframe);
                     masterVolDb.processFrame(tempframe);
+                    
                     endflag = false;
+                    
                 }
+                
             }
             
             if(!endflag)
@@ -238,6 +274,12 @@ namespace Ael {
         }
         
         setPosFrames(pos);
+        
+        for(auto it = effect_list.begin(); it != effect_list.end(); it++)
+            delete *it;
+        
+        for(auto it = stream_list.begin(); it != stream_list.end(); it++)
+            delete *it;
         
         return fullmix;
     }
