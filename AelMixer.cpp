@@ -16,6 +16,8 @@ namespace Ael {
 
 /////////////////AELCHANNEL
     
+    int AelChannel::ID = 0;
+    
     AelFrame AelChannel::getNextFrame(){
         
         if(eoc == true)
@@ -24,6 +26,7 @@ namespace Ael {
         AelFrame frame = stream.getNextFrame();
         
         for( AelEffect* &effect : effectChain )
+            
             if(effect->isOn())
                 effect->processFrame(frame);
         
@@ -89,11 +92,13 @@ namespace Ael {
     
     AelChannel* AelMixer::addChannel(const string &filename){
         
-        AelChannel *newchannel = new AelChannel(filename, m_nChannels++);
+        AelChannel *newchannel = new AelChannel(filename);
         channel_list.push_back(newchannel);
         
         if(newchannel->stream.getnframes() > m_nMaxFrames)
             m_nMaxFrames = newchannel->stream.getnframes();
+        
+        m_nChannels++;
         
         return newchannel;
         
@@ -155,6 +160,8 @@ namespace Ael {
             
         }
         
+        m_nChannels--;
+        
         return true;
         
     }
@@ -207,8 +214,10 @@ namespace Ael {
     AelAudioStream* AelMixer::getFullMix(){
         
         AelAudioStream *fullmix = new AelAudioStream(2);
-        
+        int pos = getPosFrames();
         bool endflag = false;
+        
+        setPosFrames(0);
         
         while(!endflag){
             
@@ -228,7 +237,7 @@ namespace Ael {
                 fullmix->AddFrames(tempframe);
         }
         
-        setPosFrames(currPos);
+        setPosFrames(pos);
         
         return fullmix;
     }

@@ -18,6 +18,7 @@ namespace Ael {
     class AelChannel {
         
         friend class AelMixer;
+        static int ID;
         
         const int channel_ID;
         string name;
@@ -31,7 +32,7 @@ namespace Ael {
         
     public:
         
-        AelChannel(const string &fileName, int ID) : stream(fileName), volume(0.5), panner(0), onoff(true), name(fileName),
+        AelChannel(const string &fileName) : stream(fileName), volume(0.5), panner(0), onoff(true), name(fileName),
         channel_ID(ID), eoc(false) { }
         
         void setVolumeDb(double volDb) { volume.setVolumeDb(volDb); }

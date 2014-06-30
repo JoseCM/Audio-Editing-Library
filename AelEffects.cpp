@@ -8,12 +8,16 @@ using namespace Ael;
 AelAudioStream& AelEffect::processStream(AelAudioStream &mystream){
 	
 	AelAudioStream *temp = new AelAudioStream(mystream.getchannels());
+    int init_pos = mystream.getCurrPosition();
+    mystream.rewind();
     
 	for (int i = 0; i < mystream.getnframes(); i++){
 		AelFrame aux = mystream.getNextFrame();
 		aux = processFrame(aux);
 		temp->AddFrames(aux);
 	}
+    
+    mystream.setCurrPosition(init_pos);
 	
 	return *temp;
 }
