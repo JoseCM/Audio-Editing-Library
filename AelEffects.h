@@ -28,7 +28,7 @@ namespace Ael {
         int getNChannels() {return n_channels; }
 		virtual AelFrame& processFrame(AelFrame&) = 0; // retorna a propria frame processada
 		virtual AelAudioStream& processStream(AelAudioStream &); // retorna a propria frame processada
-        virtual AelEffect* getCopy();
+        virtual AelEffect* getCopy() = 0;
 		bool isOn() { return onoff; }
 		void m_turnOn(){ onoff = true; }
 		void m_turnOff() { onoff = false; }

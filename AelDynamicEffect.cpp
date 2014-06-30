@@ -112,10 +112,10 @@ namespace Ael {
 
     void AelCompressor::setRatio(double ratio_){
     
-        if(ratio_ < 1.0)
+        if(LESSTHAN(ratio_, 1.0))
             ratio = 1.0;
         
-        else if (ratio_ > 70.0)
+        else if (MORETHAN(ratio_, 70.0))
             ratio = 70.0;
         
         else
@@ -125,10 +125,10 @@ namespace Ael {
     
     void AelCompressor::setThreshold(double thresholddb){
     
-        if(thresholddb > -1.0)
+        if(MORETHAN(thresholddb, -1.0))
             thresholdDB = -1.0;
         
-        else if(thresholddb < -70.0)
+        else if(LESSTHAN(thresholddb, -70.0))
             thresholdDB = -70.0;
         
         else
@@ -141,10 +141,10 @@ namespace Ael {
     
     void AelCompressor::setAttack(double attack_) {
     
-        if(attack_ > 2.6)
+        if(MORETHAN(attack_, 2.6))
             attack = exp(-1.0/(sampleRate*2.6));
         
-        else if(attack_ < 0.00001)
+        else if(LESSTHAN(attack_, 0.00001))
             attack = exp(-1.0/(sampleRate*0.00001));
         
         else
@@ -155,10 +155,10 @@ namespace Ael {
     
     void AelCompressor::setRelease(double release_){
     
-        if(release_ > 5.0)
+        if(MORETHAN(release_, 5.0))
             release = exp(-1.0/(sampleRate*5.0));
         
-        else if(release_ < 0.130)
+        else if(LESSTHAN(release_, 0.130))
             release = exp(-1.0/(sampleRate*0.130));
         
         else
@@ -192,7 +192,7 @@ namespace Ael {
 
             float logx = 20.0 * log10(peak/MAX_SAMPLE_VALUE);
                 
-            frame = frame *  pow(10.0, (thresholdDB - logx) * (1.0-(1.0/ratio)) / 20.0);
+            frame = (frame *  pow(10.0, (thresholdDB - logx) * (1.0-(1.0/ratio)) / 20.0)) * getWetLevel() + frame * (1-getWetLevel());
             
         }
         
@@ -214,10 +214,10 @@ namespace Ael {
     
     void AelGate::setThreshold(double thresholddb){
         
-        if(thresholddb > -1.0)
+        if(MORETHAN(thresholddb, -1.0))
             thresholdDB = -1.0;
         
-        else if(thresholddb < -70.0)
+        else if(LESSTHAN(thresholddb, -70.0))
             thresholdDB = -70.0;
         
         else
@@ -226,15 +226,15 @@ namespace Ael {
         
         threshold = MAX_SAMPLE_VALUE * pow(10.0, thresholdDB/20);
         
+        
     }
     
     void AelGate::setAttenuation(double att){
         
+        if(MORETHAN(att, 0.0))
+            attenuationDB = 0.0;
         
-        if(att > 0.0)
-            attenuationDB  = 0.0;
-        
-        else if(att < -70.0)
+        else if(LESSTHAN(att, -70.0))
             attenuationDB = -70.0;
         
         else
@@ -248,10 +248,11 @@ namespace Ael {
     
     void AelGate::setAttack(double attack_) {
         
-        if(attack_ > 2.6)
+        
+        if(MORETHAN(attack_, 2.6))
             attack = exp(-1.0/(sampleRate*2.6));
         
-        else if(attack_ < 0.00001)
+        else if(LESSTHAN(attack_, 0.00001))
             attack = exp(-1.0/(sampleRate*0.00001));
         
         else
@@ -262,10 +263,10 @@ namespace Ael {
     
     void AelGate::setRelease(double release_){
         
-        if(release_ > 5.0)
+        if(MORETHAN(release_, 5.0))
             release = exp(-1.0/(sampleRate*5.0));
         
-        else if(release_ < 0.130)
+        else if(LESSTHAN(release_, 0.130))
             release = exp(-1.0/(sampleRate*0.130));
         
         else
@@ -289,7 +290,7 @@ namespace Ael {
         prev_sample = peak;
         
         if(peak < threshold)
-            frame = frame * attenuation;
+            frame = frame * attenuation * getWetLevel() + frame * (1 - getWetLevel());
 
         return frame;
     }
