@@ -27,6 +27,7 @@ namespace Ael {
 	public:
 		AelFixDelayLine(float time = 0, float sampleRate = 44100, int n_ch = 2); // time in seconds
 		bool write(AelFrame&);
+		float getDelayTime(){ return maxDelayLen / 44100.0; }
 		AelFrame read();
 		AelFrame readWrite(AelFrame&);
         
@@ -62,11 +63,12 @@ namespace Ael {
 		float getBL();
 		float getFB();
 		float getFF();
-        AelEffect* getCopy() { return NULL;}
+		AelEffect* getCopy();
+		float getDelayTime() { return ucombdelay.getDelayTime(); }
 		~AelUniComb();
 	private:
+
 		AelFixDelayLine ucombdelay;
-		int channels;
 		float BL;
 		float FF;
 		float FB;
@@ -98,7 +100,8 @@ namespace Ael {
 		float getLFOFreq();
         float getDepth();
 		
-        AelEffect* getCopy() { return NULL;}
+		AelEffect* getCopy();
+
 		virtual AelFrame& processFrame(AelFrame&);
 		
 	};
@@ -118,7 +121,7 @@ namespace Ael {
         void setRVT(float rvt);
 		float getRVT();
         
-        AelEffect* getCopy() { return NULL;}
+		AelEffect* getCopy();
 		virtual AelFrame& processFrame(AelFrame& iFrame);
         
         
@@ -132,8 +135,7 @@ namespace Ael {
 		//float getECT();
 		bool setFB(float fb);
 		float getFB();
-		
-        AelEffect* getCopy() { return NULL;}
+		AelEffect* getCopy();
         virtual AelFrame& processFrame(AelFrame& iFrame);
         
 	private:

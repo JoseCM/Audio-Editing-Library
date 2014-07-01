@@ -98,14 +98,14 @@ namespace Ael{
     
     /////////////////////UNICOMBFILTER
     
-	AelUniComb::AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate, int n_ch) : BL(_BL), FB(_FB), FF(_FF), channels(n_ch), ucombdelay(time, samplerate, n_ch), AelEffect(samplerate)
+	AelUniComb::AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate, int n_ch) : BL(_BL), FB(_FB), FF(_FF), ucombdelay(time, samplerate, n_ch), AelEffect(n_ch,samplerate)
 	{
 	}
     
 	AelFrame& AelUniComb::processFrame(AelFrame& iframe){
         
 		AelFrame &out = iframe;
-		AelFrame xh(channels), delayout = ucombdelay.read();
+		AelFrame xh(n_channels), delayout = ucombdelay.read();
         
 		xh = iframe + delayout * FB; // xh = in + delay*FB
 		out = (delayout * FF + xh * BL) * getWetLevel() + iframe * (1- getWetLevel()); // out = delay*FF + xh*BL
@@ -163,6 +163,11 @@ namespace Ael{
 	
 	float AelUniComb::getFF(){
 		return FF;
+	}
+
+	AelEffect* AelUniComb::getCopy(){
+			AelEffect* temp = new AelUniComb(ucombdelay.getDelayTime(), BL, FB, FF,sampleRate,n_channels);
+			return temp;
 	}
     
 	AelUniComb::~AelUniComb()
@@ -265,13 +270,16 @@ namespace Ael{
 		
 		return frame;
 	}
-	
-    
+
+	 AelEffect* AelFlanger::getCopy(){
+		 AelEffect* temp = new AelFlanger(delayTime, feedBack, LFOfreq, depth, n_channels, sampleRate);
+		 return temp;
+	 }
 	
 	
     //////////////////////AELREVERB
 	
-	AelReverb::AelReverb(float RVT_, int n_ch, int samplerate): AelEffect(samplerate), RVT(RVT_),
+	AelReverb::AelReverb(float RVT_, int n_ch, int samplerate): AelEffect(n_ch,samplerate), RVT(RVT_),
     C1(0.0297, 0, pow(0.001, 0.0297/RVT_), 1, samplerate, n_ch),
     C2(0.0371, 0, pow(0.001, 0.0371/RVT_), 1, samplerate, n_ch),
     C3(0.0411, 0, pow(0.001, 0.0411/RVT_), 1, samplerate, n_ch),
@@ -319,11 +327,15 @@ namespace Ael{
 		
 	}
     
+	AelEffect* AelReverb::getCopy() {
+		AelEffect* temp = new AelReverb(RVT, n_channels, sampleRate);
+		return temp;
+	}
 	
     
     ////////////////////////AELECHO
     
-	AelEcho::AelEcho(float echo_time, float feedback, int n_ch, int samplerate) : AelEffect(samplerate), echodelay(echo_time, 1, feedback, 0, samplerate, n_ch)
+	AelEcho::AelEcho(float echo_time, float feedback, int n_ch, int samplerate) : AelEffect(n_ch,samplerate), echodelay(echo_time, 1, feedback, 0, samplerate, n_ch)
 	{}
     
 	bool  AelEcho::setFB(float fb){
@@ -348,6 +360,9 @@ namespace Ael{
 		return echodelay.processFrame(iFrame);
 	}
     
-	
+	AelEffect* AelEcho::getCopy() {
+		AelEffect* temp = new AelEcho(echodelay.getDelayTime(), echodelay.getFB(), n_channels, sampleRate);
+		return temp;
+	}
     
 }
