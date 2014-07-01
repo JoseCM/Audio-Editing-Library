@@ -256,7 +256,7 @@ namespace Ael {
                     
                     tempframe = tempframe + stream->getNextFrame();
                     
-                    for( AelEffect* &effect : master_effects)
+                    for( AelEffect* &effect : effect_list)
                         if(effect->isOn())
                             effect->processFrame(tempframe);
                     
