@@ -99,9 +99,6 @@ namespace Ael {
     AelEffect* AelIIR::getCopy(){
         AelIIR *cp = new AelIIR(gain, cutoff, getNChannels(), getSampleRate());
     
-        cp->out_1 = out_1;
-        cp->in_1 = in_1;
-        
         cp->ON = ON;
         
         if(ON == lowpass){
@@ -259,11 +256,6 @@ namespace Ael {
     
     AelEffect* AelButterWorth::getCopy(){
         AelButterWorth *cp = new AelButterWorth(gain, cutoff, BandWidth ,getNChannels(), getSampleRate());
-        
-        cp->out_1 = out_1;
-        cp->in_1 = in_1;
-        cp->out_2 = in_2;
-        cp->in_2 = in_2;
         
         cp->ON = ON;
 
