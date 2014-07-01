@@ -21,7 +21,7 @@ namespace Ael {
 		vector<AelFrame> delay;
 		
 	};
-
+    
 	class AelFixDelayLine : public AelDelayLine
 	{
 	public:
@@ -29,13 +29,13 @@ namespace Ael {
 		bool write(AelFrame&);
 		AelFrame read();
 		AelFrame readWrite(AelFrame&);
-
+        
 	protected:
 		int position_r;
 		int position_w;
-
+        
 	};
-
+    
 	class AelVDelayLine : public AelDelayLine {
 	public:
 		AelVDelayLine(float del = 0, float maxdel = 1, float sampleRate = 44100, int n_ch = 2);
@@ -43,16 +43,16 @@ namespace Ael {
 		bool write(AelFrame&);
 		AelFrame readWrite(AelFrame&);
 		void setDelayTime(float delayTime);
-
+        
 	private:
 		float vdt;
 		int position_w;
 	};
-
+    
 	
-
+    
 	class AelUniComb : public AelEffect {
-
+        
 	public:
 		AelUniComb(float time, float _BL, float _FB, float _FF, float samplerate = 44100, int n_ch = 2);
 		AelFrame& processFrame(AelFrame&);
@@ -62,6 +62,7 @@ namespace Ael {
 		float getBL();
 		float getFB();
 		float getFF();
+        AelEffect* getCopy() { return NULL;}
 		~AelUniComb();
 	private:
 		AelFixDelayLine ucombdelay;
@@ -69,7 +70,7 @@ namespace Ael {
 		float BL;
 		float FF;
 		float FB;
-
+        
 	};
 	
 	class AelFlanger : public AelEffect {
@@ -86,7 +87,7 @@ namespace Ael {
 		
 		AelFlanger(float delay, float feedback, float modFreq = 1.0, float depth_ = 0.001, int n_chan = 2, int samplerate = 44100) : AelEffect(samplerate), delayLine(delay, delay + depth_, sampleRate, n_chan) , delayTime(delay), feedBack(feedback), modAngle(0), angleInc(2 * M_PI *  1 / sampleRate), LFOfreq(modFreq), depth(depth_) {
         }
-	
+        
 		void setDelayTime(float dt);
 		void setFeedBack(float fb);
 		void setLFOFreq(float freq);
@@ -97,6 +98,7 @@ namespace Ael {
 		float getLFOFreq();
         float getDepth();
 		
+        AelEffect* getCopy() { return NULL;}
 		virtual AelFrame& processFrame(AelFrame&);
 		
 	};
@@ -112,14 +114,17 @@ namespace Ael {
 		
 	public:
 		AelReverb(float RVT_, int n_ch=2, int samplerate=44100);
-		void setRVT(float rvt);
+		
+        void setRVT(float rvt);
 		float getRVT();
+        
+        AelEffect* getCopy() { return NULL;}
 		virtual AelFrame& processFrame(AelFrame& iFrame);
-
-	   
-	
+        
+        
+        
 	};
-
+    
 	class AelEcho : public AelEffect{
 	public:
 		AelEcho(float echo_time,float feedback, int n_ch = 2, int samplerate = 44100);
@@ -127,16 +132,18 @@ namespace Ael {
 		//float getECT();
 		bool setFB(float fb);
 		float getFB();
-		virtual AelFrame& processFrame(AelFrame& iFrame);
-
+		
+        AelEffect* getCopy() { return NULL;}
+        virtual AelFrame& processFrame(AelFrame& iFrame);
+        
 	private:
 		AelUniComb echodelay;
-
+        
 	};
-
-
+    
+    
 	
-
+    
 }
 
 #endif

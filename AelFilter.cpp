@@ -217,7 +217,7 @@ namespace Ael {
             cutoff = 0.0;
         
         else
-            this->cutoff = cutoff_;
+            cutoff = cutoff_;
         
         switch (ON) {
             case lowpass:
