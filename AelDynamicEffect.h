@@ -19,7 +19,7 @@ namespace Ael {
         double volume;
         
     public:
-        AelVolume(double gain = 0.5, int n_chn = 2, int sampRate = 44100) : Ael::AelEffect(n_chn, sampRate), volume(gain) { }
+        AelVolume(double gain = 1.0, int n_chn = 2, int sampRate = 44100) : Ael::AelEffect(n_chn, sampRate), volume(gain) { }
         double getVolume();
         void setVolume(double);
         double getVolumeDb();
@@ -37,7 +37,7 @@ namespace Ael {
         double panleft;
         
     public:
-        AelPanner(double pan = 0.0, int n_chn = 2, int sampRate = 44100) : Ael::AelEffect(n_chn, sampRate), pan(pan), panright( (1 + pan) / 2.0 ), panleft((1 - pan) / 2.0 ) { }
+        AelPanner(double pan = 0.0, int n_chn = 2, int sampRate = 44100) : Ael::AelEffect(n_chn, sampRate), pan(pan), panright( (sin((1 + this->pan) / 2.0 * M_PI / 2.0)) ), panleft((sin((1 - this->pan) / 2.0 * M_PI / 2.0)) ) { }
         double getPan();
         void setPan(double);
         

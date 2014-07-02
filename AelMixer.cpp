@@ -71,6 +71,8 @@ namespace Ael {
         for(auto it = temp_list.begin(); it != temp_list.end(); it++)
             delete *it;
         
+        new_stream->rewind();
+        
         return new_stream;
     }
     
@@ -233,6 +235,7 @@ namespace Ael {
         list<AelAudioStream*> stream_list;
         list<AelEffect*> effect_list;
         AelAudioStream *fullmix = new AelAudioStream(2);
+        int x = 0;
         
         int pos = getPosFrames();
         bool endflag = false;
@@ -250,15 +253,20 @@ namespace Ael {
             endflag = true;
             AelFrame tempframe(2);
             
+            if(x > 150000){
+                
+            }
+            
             for(AelAudioStream* &stream : stream_list){
                 
                 if(!(stream->isEOS())){
                     
                     tempframe = tempframe + stream->getNextFrame();
                     
-                    for( AelEffect* &effect : master_effects)
+                    for( AelEffect* &effect : effect_list){
                         if(effect->isOn())
                             effect->processFrame(tempframe);
+                    }
                     
                     masterPan.processFrame(tempframe);
                     masterVolDb.processFrame(tempframe);
@@ -269,6 +277,7 @@ namespace Ael {
                 
             }
             
+            x++;
             if(!endflag)
                 fullmix->AddFrames(tempframe);
         }

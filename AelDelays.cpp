@@ -262,7 +262,7 @@ namespace Ael{
 		
 		delayLine.setDelayTime(delayTime + (mod * depth));
 		
-		frame = (delayLine.read() * getWetLevel()) + temp * (1- getWetLevel());
+		frame = (delayLine.read() * getWetLevel()) + (temp * (1- getWetLevel()));
 		
 		temp =  frame * feedBack + temp ;
 		
