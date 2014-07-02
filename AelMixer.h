@@ -32,7 +32,7 @@ namespace Ael {
         
     public:
         
-        AelChannel(const string &fileName) : stream(fileName), volume(0.5), panner(0), onoff(true), name(fileName),
+        AelChannel(const string &fileName) : stream(fileName), volume(1.0), panner(0), onoff(true), name(fileName),
         channel_ID(ID), eoc(false) { }
         
         void setVolumeDb(double volDb) { volume.setVolumeDb(volDb); }
@@ -76,7 +76,7 @@ namespace Ael {
         AelAudioStream* getFullMix();
         
         AelEffect* getEffect(int effectId);
-        int addEffect(AelEffect &effect) { master_effects.push_back(&effect); return effect.getId();}
+        int addEffect(AelEffect &effect) { master_effects.push_back(&effect); return effect.getId(); }
         
         void setPosMsec(int mseg);
         int getPosMsec() { return static_cast<float>(currPos) * 1000.0 / 44100.0; }
