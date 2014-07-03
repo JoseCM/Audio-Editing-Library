@@ -7,53 +7,60 @@ namespace Ael{
 
 
 		Ael::AelPlayer* player = reinterpret_cast<AelPlayer*>(dataPointer);
-		register int* out = reinterpret_cast<int*>(outputBuffer);
+        int* out = reinterpret_cast<int*>(outputBuffer);
 
-		//cout << counter++ << endl;
+
 		player->threadptr->join();
-		memcpy(outputBuffer, player->frames, player->bufferFrames);
-		delete player->threadptr;
+		memcpy(outputBuffer, player->frames, player->bufferFrames * player->channels * sizeof(int));
+		delete player->threadptr; player->threadptr = NULL;
 		player->threadptr = new thread(player->tick, player);
-		//cout << "end" << counter << endl;
-		
 
-		if (player->status == PLAYING) return 0;
-		if (player->status == PAUSED) return 1;
-		if (player->status == STOPPED) return 2;
+		/*if (player->status == PLAYING) return 0;
+		else if (player->status == PAUSED) return 1;
+		else  return 2;
+        */
+        
+        return 0;
 	}
 
 
 
-	AelPlayer::AelPlayer(int n_channels, float samplerate, int bufferFrames) : mixerptr(new AelMixer), threadptr(NULL), frames(NULL), channels(n_channels),status(STOPPED){
+	AelPlayer::AelPlayer(int n_channels, float samplerate, int bufferFrames) : mixerptr(new AelMixer), threadptr(NULL), frames(new int[bufferFrames * 2]), sampleRate(samplerate), channels(n_channels),status(STOPPED), bufferFrames(bufferFrames){
 
-		RtAudio::StreamParameters parameters;
+		
+	}
+    
+    void AelPlayer::openStream(){
+        
+        RtAudio::StreamParameters parameters;
 		parameters.deviceId = dac.getDefaultOutputDevice();
-		parameters.nChannels = n_channels;
-
+		parameters.nChannels = channels;
+        
 		RtAudioFormat format = RTAUDIO_SINT32;
-
+        
 		try{
-			dac.openStream(&parameters, NULL, format, (unsigned int)samplerate, (unsigned int*)&bufferFrames, &Ael::tick, (void*) this);
-			frames = new int[bufferFrames];
-			this->bufferFrames = bufferFrames;
+			dac.openStream(&parameters, NULL, format, (unsigned int)sampleRate, (unsigned int*)&bufferFrames, Ael::tick, (void*) this);
 		}
 		catch (RtAudioError &error){
 			error.printMessage();
 		}
-		
-	}
+
+        
+        
+    }
 
 	void AelPlayer::start(){
-		static int firstTimePlaying = 1;
-		if (firstTimePlaying){
-			threadptr = new thread(this->tick, this);
-			firstTimePlaying = 0;
+        
+        //static int firstTimePlaying = 1;
+        
+		if (status == STOPPED){
+            threadptr = new thread(this->tick, this);
+            openStream();
 		}
-
-		threadptr->join();
 
 		try{
 			dac.startStream();
+            status = PLAYING;
 		}
 		catch (RtAudioError &error){
 			error.printMessage();
@@ -63,9 +70,14 @@ namespace Ael{
 
 
 	void AelPlayer::pause(){
+        
+        if(status != PLAYING)
+            return;
+        
 		try{
 			if (dac.isStreamOpen())
 				dac.stopStream();
+            status = PAUSED;
 		}
 		catch (RtAudioError &error){
 			error.printMessage();
@@ -73,27 +85,36 @@ namespace Ael{
 	}
 
 	void AelPlayer::stop(){
-		dac.closeStream();
+        
+        if(status != STOPPED)
+            dac.closeStream();
+        
+        if(threadptr != NULL){
+            if(threadptr->joinable())
+                threadptr->join();
+            delete threadptr;
+        }
+        mixerptr->setPosFrames(0);
+        status = STOPPED;
 	}
 
 	void AelPlayer::tick(AelPlayer* player){
 
 		int* initframes = player->frames;
 
-		for (register unsigned int i = 0; i < player->bufferFrames; i++){
+		for (unsigned int i = 0; i < player->bufferFrames; i++){
+            Ael::AelFrame aux = player->mixerptr->getNextFrame();
 			for (int j = 0; j < player->channels; j++){
-				Ael::AelFrame aux = player->mixerptr->getNextFrame();
 				*initframes++ = aux[j];
 			}
-
 		}
-
+        
 	}
 
 	AelPlayer::~AelPlayer(){
 		delete [] frames;
 		delete mixerptr;
-		delete threadptr;
+		//delete threadptr;
 		dac.closeStream();
 
 	}
