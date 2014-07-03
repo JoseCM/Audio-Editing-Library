@@ -61,15 +61,32 @@ namespace Ael{
         
 		if (maxDelayLen){
 			rp = position_w - vdt;
-			rp = (MOREEQ(rp, 0)  ? (rp < maxDelayLen ? rp : rp - maxDelayLen) : rp + maxDelayLen);
+            
+            //DEBUG
+            /*
+            if(position_w == 4 && MORETHAN(vdt, 4.0) && LESSTHAN(vdt, 4.1)){
+                
+            }
+            */
+            
+			rp = ( MOREEQ(rp, 0)  ? (LESSTHAN(rp, maxDelayLen) ? rp : rp - maxDelayLen) : rp + maxDelayLen);
+            
+            if(rp >= maxDelayLen || rp < 0.0)
+                rp = 0;
+            
 			rpi = floor(rp);
 			frac = rp - rpi;
+            
+            if(rpi == 67){
+   
+            }
+            
 			AelFrame next = (rpi != maxDelayLen - 1 ? delay[rpi + 1] : delay[0]);
 			AelFrame out = delay[rpi] + (next - delay[rpi]) * frac;
 			return out;
 		}
-		return AelFrame(channels);
         
+		return AelFrame(channels);
 	}
     
 	bool AelVDelayLine::write(AelFrame& iframe){
@@ -261,8 +278,10 @@ namespace Ael{
 		modAngle += angleInc;
 		
 		delayLine.setDelayTime(delayTime + (mod * depth));
+        
+        AelFrame temp2 = delayLine.read();
 		
-		frame = (delayLine.read() * getWetLevel()) + (temp * (1- getWetLevel()));
+		frame = (temp2 * getWetLevel()) + (temp * (1- getWetLevel()));
 		
 		temp =  frame * feedBack + temp ;
 		

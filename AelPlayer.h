@@ -32,10 +32,11 @@ namespace Ael{
 		thread* threadptr;
 		int* frames;
 		int channels;
+        float sampleRate;
 		int  bufferFrames;
 		STATUSPLAYER status;
-		
-		
+        
+        void openStream();
 		
 	};
 
