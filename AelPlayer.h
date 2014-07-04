@@ -11,10 +11,15 @@ using namespace std;
 namespace Ael{
 
 
-	enum STATUSPLAYER { PLAYING, PAUSED, STOPPED };
+	
 
 	class AelPlayer {
+        
 	public:
+        
+        friend int tick(void*, void*, unsigned int, double, RtAudioStreamStatus, void*);
+        enum STATUSPLAYER { PLAYING, PAUSED, STOPPED };
+        
 		AelPlayer(int n_channels=2, float samplerate=44100.0, int bufferFrames=512);
 		AelPlayer(AelMixer*);
 		void start();
@@ -22,9 +27,10 @@ namespace Ael{
 		void stop();
 		AelMixer* getMixer(){ return mixerptr; }
 		static void tick(AelPlayer* player);
+        STATUSPLAYER getStatus() { return status; }
 		~AelPlayer();
 		
-		friend int tick(void*, void*, unsigned int, double, RtAudioStreamStatus, void*);
+		
 		
 	private:
 		AelMixer* mixerptr;

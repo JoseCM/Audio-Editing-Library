@@ -44,7 +44,6 @@ namespace Ael{
 		catch (RtAudioError &error){
 			error.printMessage();
 		}
-
         
         
     }
@@ -94,6 +93,7 @@ namespace Ael{
                 threadptr->join();
             delete threadptr;
         }
+
         mixerptr->setPosFrames(0);
         status = STOPPED;
 	}

@@ -196,7 +196,7 @@ namespace Ael{
 	void AelFlanger::setDelayTime(float dt){
 		
         //dt < 0 || dt > 15.00000001
-		if( LESSTHAN(dt, 0.0) || MORETHAN(dt, 15.0))
+        if( LESSTHAN(dt, 0.0) || MORETHAN(dt, 0.015))
 			return;
 		
 		try {
@@ -311,7 +311,16 @@ namespace Ael{
 	
     
 	void AelReverb::setRVT(float rvt){
-		
+
+        if(MORETHAN(dp, 1.5))
+            depth = 1.5;
+
+        else if (LESSTHAN(dp, 1))
+            depth = 1;
+
+        else
+            depth = dp;
+
 		RVT = rvt;
 		
 		C1.setFB(pow(0.001, 0.0297/RVT));
@@ -355,7 +364,9 @@ namespace Ael{
     ////////////////////////AELECHO
     
 	AelEcho::AelEcho(float echo_time, float feedback, int n_ch, int samplerate) : AelEffect(n_ch,samplerate), echodelay(echo_time, 1, feedback, 0, samplerate, n_ch)
-	{}
+    {
+        //Fazer limites echo time
+    }
     
 	bool  AelEcho::setFB(float fb){
         

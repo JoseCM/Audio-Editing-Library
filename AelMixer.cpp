@@ -20,7 +20,7 @@ namespace Ael {
     
     AelFrame AelChannel::getNextFrame(){
         
-        if(eoc == true)
+        if(isEOC())
             return AelFrame(stream.getchannels());
         
         AelFrame frame = stream.getNextFrame();
@@ -32,8 +32,6 @@ namespace Ael {
         panner.processFrame(frame);
         volume.processFrame(frame);
         
-        if(stream.isEOS())
-            eoc = true;
         
         return frame;
         
@@ -199,7 +197,6 @@ namespace Ael {
         
         for(list<AelChannel*>::iterator iter = channel_list.begin(); iter != channel_list.end(); iter++){
             (*iter)->stream.setCurrPosition(nframe);
-            
         }
         
         currPos = nframe;
@@ -210,7 +207,10 @@ namespace Ael {
     AelFrame AelMixer::getNextFrame(){
         
         AelFrame new_frame(2);
-        
+
+        if(isEOM())
+            return new_frame;
+
         for(AelChannel* &channel : channel_list){
             if((!channel->isEOC()) && channel->isOn())
                 new_frame = new_frame + channel->getNextFrame();

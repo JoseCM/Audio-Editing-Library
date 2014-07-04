@@ -116,9 +116,6 @@ namespace Ael{
 		}
 		
         AelFrame new_frame(channels);
-    
-        //if(audioFstream.tellg() != sizeof(int) * channels  * currPosition)
-        //    audioFstream.seekg(sizeof(int) * channels  * currPosition, ios_base::beg);
         
         audioFstream.read(reinterpret_cast<char*>(new_frame.samples), sizeof(int) * new_frame.n_channels);
         
@@ -140,7 +137,7 @@ namespace Ael{
         }
     
         else {
-            audioFstream.seekg(currPosition, audioFstream.beg);
+            audioFstream.seekg(pos, audioFstream.beg);
             currPosition = pos;
             eos = false;
         }
@@ -153,8 +150,6 @@ namespace Ael{
         currPosition = 0;
         eos = false;
     }
-    
-    
 
 	AelAudioStream::~AelAudioStream() {
     
