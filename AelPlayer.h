@@ -14,12 +14,12 @@ namespace Ael{
 	
 
 	class AelPlayer {
-        
+		
 	public:
-        
-        friend int tick(void*, void*, unsigned int, double, RtAudioStreamStatus, void*);
-        enum STATUSPLAYER { PLAYING, PAUSED, STOPPED };
-        
+		
+		friend int tick(void*, void*, unsigned int, double, RtAudioStreamStatus, void*);
+		enum STATUSPLAYER { PLAYING, PAUSED, STOPPED };
+		
 		AelPlayer(int n_channels=2, float samplerate=44100.0, int bufferFrames=512);
 		AelPlayer(AelMixer*);
 		void start();
@@ -27,7 +27,7 @@ namespace Ael{
 		void stop();
 		AelMixer* getMixer(){ return mixerptr; }
 		static void tick(AelPlayer* player);
-        STATUSPLAYER getStatus() { return status; }
+		STATUSPLAYER getStatus() { return status; }
 		~AelPlayer();
 		
 		
@@ -38,11 +38,11 @@ namespace Ael{
 		thread* threadptr;
 		int* frames;
 		int channels;
-        float sampleRate;
+		float sampleRate;
 		int  bufferFrames;
 		STATUSPLAYER status;
-        
-        void openStream();
+		
+		void openStream();
 		
 	};
 
