@@ -202,6 +202,22 @@ namespace Ael {
         currPos = nframe;
         
     }
+
+    bool AelMixer::removeEffect(int effectId){
+
+        for(list<AelEffect*>::iterator it = master_effects.begin(); it != master_effects.end(); it++){
+
+            if((*it)->getId() == effectId){
+                master_effects.erase(it);
+                return true;
+            }
+
+        }
+
+        return false;
+
+    }
+
     
     
     AelFrame AelMixer::getNextFrame(){

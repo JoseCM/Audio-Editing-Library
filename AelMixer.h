@@ -76,7 +76,8 @@ namespace Ael {
         
         AelEffect* getEffect(int effectId);
         int addEffect(AelEffect &effect) { master_effects.push_back(&effect); return effect.getId(); }
-        
+        bool removeEffect(int effectId);
+
         void setPosMsec(int mseg);
         int getPosMsec() { return static_cast<float>(currPos) * 1000.0 / 44100.0; }
         void setPosFrames(int nframe);
