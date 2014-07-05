@@ -45,8 +45,9 @@ namespace Ael{
 	private:
 		string name;
 	public:
-		AelExecption(string n) : exception(), name(n){};
-		const char* what() { return name.c_str(); }
+		AelExecption(string n);
+        ~AelExecption() _NOEXCEPT;
+		const char* what();
 	};
     
 }

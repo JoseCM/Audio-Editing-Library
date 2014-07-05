@@ -27,13 +27,12 @@ namespace Ael {
         AelAudioStream stream;
         list<AelEffect*> effectChain;
         bool onoff;
-        bool eoc;
         
         
     public:
         
         AelChannel(const string &fileName) : stream(fileName), volume(1.0), panner(0), onoff(true), name(fileName),
-        channel_ID(ID), eoc(false) { }
+        channel_ID(ID) { }
         
         void setVolumeDb(double volDb) { volume.setVolumeDb(volDb); }
         void setPan(double pan){ panner.setPan(pan); }
@@ -55,7 +54,7 @@ namespace Ael {
         AelFrame getNextFrame();
         AelAudioStream* getFullyProcessed();
         
-        bool isEOC(){ return eoc; }
+        bool isEOC(){ return stream.isEOS(); }
         
     };
     
@@ -77,7 +76,8 @@ namespace Ael {
         
         AelEffect* getEffect(int effectId);
         int addEffect(AelEffect &effect) { master_effects.push_back(&effect); return effect.getId(); }
-        
+        bool removeEffect(int effectId);
+
         void setPosMsec(int mseg);
         int getPosMsec() { return static_cast<float>(currPos) * 1000.0 / 44100.0; }
         void setPosFrames(int nframe);
@@ -90,6 +90,7 @@ namespace Ael {
         void setPan(double pan){ masterPan.setPan(pan); }
         double getVolumeDb() { return masterVolDb.getVolumeDb(); }
         double getPan() { return masterPan.getPan(); }
+        bool isEOM() { return currPos == m_nMaxFrames; }
         
     private:
         
