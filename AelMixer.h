@@ -32,7 +32,7 @@ namespace Ael {
     public:
         
         AelChannel(const string &fileName) : stream(fileName), volume(1.0), panner(0), onoff(true), name(fileName),
-        channel_ID(ID) { }
+        channel_ID(ID++) { }
         
         void setVolumeDb(double volDb) { volume.setVolumeDb(volDb); }
         void setPan(double pan){ panner.setPan(pan); }
@@ -65,7 +65,9 @@ namespace Ael {
         
         AelMixer() : m_nChannels(0), masterVolDb(1.0), masterPan(0.0), m_nMaxFrames(0), currPos(0) { }
         
-        AelChannel* addChannel(const string &filename);
+        //AelChannel* addChannel(const string &filename);
+        AelChannel* addChannel(AelChannel *newchannel);
+
         AelChannel* getChannel(const int &channelID);
         bool removeChannel(const int &channelID);
         

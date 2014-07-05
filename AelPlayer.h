@@ -10,9 +10,6 @@ using namespace std;
 
 namespace Ael{
 
-
-	
-
 	class AelPlayer {
 		
 	public:
@@ -29,7 +26,6 @@ namespace Ael{
 		static void tick(AelPlayer* player);
 		STATUSPLAYER getStatus() { return status; }
 		~AelPlayer();
-		
 		
 		
 	private:
