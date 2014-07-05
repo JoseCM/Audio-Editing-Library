@@ -28,11 +28,13 @@ namespace Ael {
         for( AelEffect* &effect : effectChain )
             if(effect->isOn())
                 effect->processFrame(frame);
+
+        if(!isOn())
+            return AelFrame(stream.getchannels());
         
         panner.processFrame(frame);
         volume.processFrame(frame);
-        
-        
+
         return frame;
         
     }
@@ -106,7 +108,7 @@ namespace Ael {
     
 //////////////AELMIXER
     
-    AelChannel* AelMixer::addChannel(const string &filename){
+    /*AelChannel* AelMixer::addChannel(const string &filename){
         
         AelChannel *newchannel = new AelChannel(filename);
         channel_list.push_back(newchannel);
@@ -115,9 +117,26 @@ namespace Ael {
             m_nMaxFrames = newchannel->stream.getnframes();
         
         m_nChannels++;
+
+        newchannel->stream.setCurrPosition(currPos);
         
         return newchannel;
         
+    }*/
+
+    AelChannel* AelMixer::addChannel(AelChannel *newchannel){
+
+        channel_list.push_back(newchannel);
+
+        if(newchannel->stream.getnframes() > m_nMaxFrames)
+            m_nMaxFrames = newchannel->stream.getnframes();
+
+        m_nChannels++;
+
+        newchannel->stream.setCurrPosition(currPos);
+
+        return newchannel;
+
     }
     
     AelChannel* AelMixer::getChannel(const int &channelID){
@@ -159,12 +178,25 @@ namespace Ael {
     
     bool AelMixer::removeChannel(const int &channelID){
         
-        list<AelChannel*>::iterator it = findChannel(channelID);
+        /*list<AelChannel*>::iterator it = findChannel(channelID);
         
         if(it == channel_list.end())
             return false;
         
-        delete *it;
+        //delete *it;
+        */
+        list<AelChannel*>::iterator it;
+
+        for( it = channel_list.begin(); it != channel_list.end(); it++){
+
+            if((*it)->getID() == channelID)
+               break;
+
+        }
+
+        if(it == channel_list.end())
+            return false;
+
         channel_list.erase(it);
         
         m_nMaxFrames = 0;
@@ -228,7 +260,7 @@ namespace Ael {
             return new_frame;
 
         for(AelChannel* &channel : channel_list){
-            if((!channel->isEOC()) && channel->isOn())
+            if((!channel->isEOC()))
                 new_frame = new_frame + channel->getNextFrame();
         }
         
