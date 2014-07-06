@@ -388,11 +388,11 @@ namespace Ael{
 	
 	bool  AelEcho::setFB(float fb){
 		
-		if(MORETHAN(fb, 95.0))
-			echodelay.setFB(95.0);
+        if(MORETHAN(fb, 0.95))
+            echodelay.setFB(0.95);
 		
-		else if (LESSTHAN(fb, 5.0))
-			echodelay.setFB(5.0);
+        else if (LESSTHAN(fb, 0.05))
+            echodelay.setFB(0.05);
 		
 		else
 			echodelay.setFB(fb);
