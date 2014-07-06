@@ -415,6 +415,10 @@ namespace Ael{
 	float AelEcho::getFB(){
 		return echodelay.getFB();
 	}
+    
+    float AelEcho::getDelayTime(){
+        return echodelay.getDelayTime();
+    }
 	
 	AelFrame& AelEcho::processFrame(AelFrame& iFrame){
 		return echodelay.processFrame(iFrame);

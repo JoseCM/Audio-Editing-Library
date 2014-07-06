@@ -139,6 +139,7 @@ namespace Ael {
 		bool setFB(float fb);
 		void setDelayTime(float);
 		float getFB();
+        float getDelayTime();
 		AelEffect* getCopy();
 		virtual AelFrame& processFrame(AelFrame& iFrame);
 		
