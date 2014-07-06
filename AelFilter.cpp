@@ -20,7 +20,7 @@ namespace Ael {
     
     void AelFilter::set_gain(float gain_){
         
-        if(MORETHAN(gain_, 2.0))
+        if(MORETHAN(gain_, 1.0))
             gain = 1.0;
         
         else if (LESSTHAN(gain_, 0.0))
@@ -124,7 +124,7 @@ namespace Ael {
     {
         coef_a.assign(3, 0.0);
         coef_b.assign(2, 0.0);
-        set_LPF();    //default
+        //set_LPF();    //default
     }
     
     void AelButterWorth::set_LPF(){

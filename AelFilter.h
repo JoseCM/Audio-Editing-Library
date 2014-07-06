@@ -25,6 +25,8 @@ namespace Ael {
         virtual ~AelFilter() {    }
         virtual void set_gain(float);
         virtual void set_cutoff(float) = 0;
+        float get_gain() { return gain; }
+        float get_cutoff() { return cutoff; }
         virtual AelEffect* getCopy() = 0;
         virtual AelFrame& processFrame(AelFrame&) = 0;
     };
@@ -40,6 +42,7 @@ namespace Ael {
         virtual ~AelIIR() {  }
         void set_LPF();
         void set_HPF();
+        enum iir get_state() { return ON; }
         virtual void set_cutoff(float);
         virtual AelFrame& processFrame(AelFrame&);
         virtual AelEffect* getCopy();
@@ -60,6 +63,7 @@ namespace Ael {
         void set_NOTCH();
         void set_BPF();
         void set_bandwidth(float);
+        enum butterworth get_state() { return ON; }
         virtual void set_cutoff(float);
         virtual AelFrame& processFrame(AelFrame&);
         virtual AelEffect* getCopy();
