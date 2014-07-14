@@ -283,8 +283,7 @@ namespace Ael {
         list<AelAudioStream*> stream_list;
         list<AelEffect*> effect_list;
         AelAudioStream *fullmix = new AelAudioStream(2);
-        int x = 0;
-        
+      
         int pos = getPosFrames();
         bool endflag = false;
         
@@ -300,10 +299,6 @@ namespace Ael {
             
             endflag = true;
             AelFrame tempframe(2);
-            
-            //if(x > 150000){
-                
-            //}
             
             for(AelAudioStream* &stream : stream_list){
                 
@@ -325,7 +320,7 @@ namespace Ael {
                 
             }
             
-            //x++;
+            
             currPos++;
             if(!endflag)
                 fullmix->AddFrames(tempframe);
