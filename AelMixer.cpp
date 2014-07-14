@@ -301,9 +301,9 @@ namespace Ael {
             endflag = true;
             AelFrame tempframe(2);
             
-            if(x > 150000){
+            //if(x > 150000){
                 
-            }
+            //}
             
             for(AelAudioStream* &stream : stream_list){
                 
@@ -325,7 +325,8 @@ namespace Ael {
                 
             }
             
-            x++;
+            //x++;
+            currPos++;
             if(!endflag)
                 fullmix->AddFrames(tempframe);
         }

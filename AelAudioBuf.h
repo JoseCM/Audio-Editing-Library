@@ -68,6 +68,9 @@ namespace Ael {
 		AelFrame getNextFrame();
         
 		void SaveToFile(string);
+        bool SaveTo8051(string FileName);
+        bool RemoveFrom8051(string FileName);
+        
         
         int getCurrPosition() { return currPosition; }
         void setCurrPosition(int pos);
