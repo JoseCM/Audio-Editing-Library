@@ -111,7 +111,7 @@ namespace Ael{
 		//vdt > maxDelayLen
 	}
 	
-	
+
 	
 	/////////////////////UNICOMBFILTER
 	
@@ -428,5 +428,36 @@ namespace Ael{
 		AelEffect* temp = new AelEcho(echodelay.getDelayTime(), echodelay.getFB(), n_channels, sampleRate);
 		return temp;
 	}
-	
+
+
+    ////////////////////////AELUNKNOWN
+
+    AelUnknown::AelUnknown(float echo_time, float feedback, int n_ch, int samplerate)
+        : AelEffect(n_ch,samplerate)
+    {
+    }
+
+    bool  AelUnknown::setFB(float fb){
+        return true;
+    }
+
+    void AelUnknown::setDelayTime(float echo_time){
+    }
+
+    float AelUnknown::getFB(){
+        return 2.1f;
+    }
+
+    float AelUnknown::getDelayTime(){
+        return 2.1f;
+    }
+
+    AelFrame& AelUnknown::processFrame(AelFrame& iFrame){
+        AelFrame *p = new AelFrame(2);
+        return *p;
+    }
+
+    AelEffect* AelUnknown::getCopy() {
+        return NULL;
+    }
 }
