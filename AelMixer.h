@@ -46,6 +46,7 @@ namespace Ael {
         int getID() { return channel_ID; }
         string getName() { return name; }
         void setName(string newname) { name = newname; }
+
         
         int addEffect(AelEffect &effect) { effectChain.push_back(&effect); return effect.getId();}
         bool removeEffect(int effectId);
@@ -88,11 +89,15 @@ namespace Ael {
         int getLengthMsec() { return static_cast<float>(m_nMaxFrames) * 1000.0 / 44100.0; }
         int getLengthFrames() { return m_nMaxFrames; }
         
+        int getnChannels() { return m_nChannels; }
+
         void setVolumeDb(double volDb) { masterVolDb.setVolumeDb(volDb); }
         void setPan(double pan){ masterPan.setPan(pan); }
         double getVolumeDb() { return masterVolDb.getVolumeDb(); }
         double getPan() { return masterPan.getPan(); }
         bool isEOM() { return currPos == m_nMaxFrames; }
+        
+    
         
     private:
         

@@ -1,7 +1,7 @@
 
 
 #include "AelAudioBuf.h"
-
+#include "sndfile.h"
 
 namespace Ael{
 
@@ -106,7 +106,188 @@ namespace Ael{
 		}
 		
 	}
+    
+    bool AelAudioStream::SaveTo8051(string FileName){
+        
+        fstream fileinfo;
+        string path, musicname, infopath;
+        int index;
+        unsigned char num_musics = 0, id = 0, count = 0;
+        char name_temp[13] = {0};
+        
+        
+        if ( ( index = static_cast<int>( FileName.find_last_of('/') ) ) == string::npos)
+            if( ( index = static_cast<int>(FileName.find_last_of('\\') ) ) == string::npos)
+                    return false;
+        
+        path = FileName.substr(0, index );
+        musicname = FileName.substr(index+1,12);
+        //musicname[musicname.length()] = 0;
+        for(int i = 0 ; i<=3;i++) musicname.pop_back();
+        musicname += ".ael";
+        
+        std::transform(musicname.begin(), musicname.end(),musicname.begin(), ::toupper);
+        const char* vtr = musicname.c_str();
+        char vtr2[13] = {0};
+        
+        strcpy(vtr2, vtr);
 
+        infopath = path + "/info";
+        
+        fileinfo.open(infopath, std::fstream::binary | std::fstream::in | std::fstream::out );
+        
+        if(!fileinfo.is_open()) {
+            return false;
+        }
+        
+        fileinfo.seekg(0,ios_base::beg);
+        
+        fileinfo >> num_musics;
+        
+        while(1){
+            if(count++ == num_musics ) {
+                fileinfo << id;
+                fileinfo.write(vtr2, 13);
+                fileinfo.seekp(0, ios_base::beg);
+                fileinfo << ++num_musics;
+                
+                break;
+                
+            }
+            fileinfo >> id;
+            fileinfo.read(name_temp, 13);
+            id++;
+            if(strcmp(name_temp, musicname.c_str()) == 0) break;
+        }
+        
+        fileinfo.close();
+        //------------------------------------------
+        string musicpath = path + "/" + musicname;
+        
+        SndfileHandle file = SndfileHandle(musicpath, SFM_WRITE, SF_FORMAT_RAW | SF_FORMAT_PCM_U8, 1, 5555);
+        
+        int *samples, *mono;
+        int *aux_vector;
+    
+        try{
+            aux_vector = new int[STREAM_LEN];
+			streampos current_pos = audioFstream.tellg();
+			
+			audioFstream.seekg(0, ios_base::beg);
+			audioFstream.read(reinterpret_cast<char*>(aux_vector), sizeof(int) * STREAM_LEN);
+            
+            mono = new int[m_nframes];
+            samples = new int[m_nframes / 8];
+            
+            for(int i = 0; i < m_nframes; i++)
+                mono[i] = aux_vector[i*2];
+            
+            int id=0;
+            for(int i=0; i < m_nframes; i=i+8 )
+                samples[id++] = mono[i];
+            
+            file.write(samples, m_nframes / 8);
+            
+			delete [] aux_vector;
+            delete [] mono;
+            delete [] samples;
+            
+			audioFstream.seekg(current_pos);
+        
+        }
+        catch (bad_alloc& err){
+			throw AelExecption("Allocating Error");
+            return false;
+		}
+     
+        return true;
+    }
+    
+    bool AelAudioStream::RemoveFrom8051(string FileName){
+        
+        fstream fileinfo;
+        
+        string path, musicname, infopath;
+        int index;
+        unsigned char num_musics = 0;
+        
+        
+        if ( ( index = static_cast<int>( FileName.find_last_of('/') ) ) == string::npos)
+            if( ( index = static_cast<int>(FileName.find_last_of('\\') ) ) == string::npos)
+                return false;
+        
+        path = FileName.substr(0, index );
+        musicname = FileName.substr(index+1,13);
+        
+        std::transform(musicname.begin(), musicname.end(),musicname.begin(), ::toupper);
+        const char* vtr = musicname.c_str();
+        char vtr2[13] = {0};
+        
+        strcpy(vtr2, vtr);
+        
+        infopath = path + "/info";
+        string musicpath = path + "/" + musicname;
+        
+        fileinfo.open(infopath, std::fstream::binary | std::fstream::app | std::fstream::in | std::fstream::out );
+        
+        if(!fileinfo.is_open()) {
+            return false;
+        }
+        
+        fileinfo.seekg(0,ios_base::beg);
+        
+        fileinfo >> num_musics;
+        
+        if(!num_musics) return false;
+        
+        char *buffer1, *name;
+        
+        try{
+            buffer1 = new char [num_musics * 14];
+            name = new char [13];
+            fileinfo.read(buffer1, num_musics * 14);
+            
+            for(int i=0; i < num_musics ; i++){
+                
+               for(int j=0; j<13; j++){
+                   name[j] = buffer1[i*14+j+1];
+               }
+                
+               if(!strcmp(name,musicname.c_str())){
+                   
+                   for(int z = i*14; z< num_musics*14-14; z++)
+                       buffer1[z] = buffer1[z+14];
+                   
+                   for(int z = 0; z<num_musics;z++){
+                       buffer1[z*14] = z;
+                   }
+                   num_musics -=1 ;
+                   
+                   fileinfo.close();
+                   
+                   fileinfo.open(infopath, std::fstream::binary | std::fstream::trunc | std::fstream::out | std::fstream::in );
+                   fileinfo << num_musics;
+                   fileinfo.write(buffer1, num_musics * 14);
+                   
+                   fileinfo.close();
+                   
+                   remove(musicpath.c_str());
+                   
+                   return true;
+                   
+               }
+                    
+            }
+        
+        }
+        catch (bad_alloc& err){
+			throw AelExecption("Allocating Error");
+            return false;
+		}
+    
+        
+        return false;
+    }
 
 	AelFrame AelAudioStream::getNextFrame(){
 
@@ -339,5 +520,9 @@ namespace Ael{
 	AelFrame::~AelFrame(){
 		delete[] samples;
 	}
+    
+    
+    
+    
 	//////////////////////////////////////////////
 }
