@@ -20,16 +20,16 @@ using namespace Ael;
 AelAudioStream& AelEffect::processStream(AelAudioStream &mystream){
 	
 	AelAudioStream *temp = new AelAudioStream(mystream.getchannels());    //cria nova stream
-    int init_pos = mystream.getCurrPosition();     //guarda posicionamento actual no ficheiro audioFstream
-    mystream.rewind();     //posiciona stream para o íncio do ficheiro
-    
+	int init_pos = mystream.getCurrPosition();     //guarda posicionamento actual no ficheiro audioFstream
+	mystream.rewind();     //posiciona stream para o íncio do ficheiro
+	
 	for (int i = 0; i < mystream.getnframes(); i++){    //percorre todas as frames da stream
 		AelFrame aux = mystream.getNextFrame();     //obtem próxima frame
 		aux = processFrame(aux);       //processa a frame obtida (processFrame puramente virtual)
 		temp->AddFrames(aux);       //adiciona frame processada à nova stream
 	}
-    
-    mystream.setCurrPosition(init_pos);    //reposiciona stream para posição inicial
+	
+	mystream.setCurrPosition(init_pos);    //reposiciona stream para posição inicial
 	
 	return *temp;   //retorma stream processada
 }

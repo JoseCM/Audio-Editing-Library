@@ -30,7 +30,7 @@ namespace Ael {
 		string effectName;
 		int sampleRate;
 		double wet_level;
-        int n_channels;
+		int n_channels;
 		bool onoff;
 		
 	public:
@@ -38,10 +38,10 @@ namespace Ael {
 		int getId() { return effectId; }
 		void setSampleRate(int sr) { sampleRate = sr; }
 		int getSampleRate() { return sampleRate; }
-        int getNChannels() {return n_channels; }
+		int getNChannels() {return n_channels; }
 		virtual AelFrame& processFrame(AelFrame&) = 0;
 		virtual AelAudioStream& processStream(AelAudioStream &);
-        virtual AelEffect* getCopy() = 0;
+		virtual AelEffect* getCopy() = 0;
 		bool isOn() { return onoff; }
 		void m_turnOn(){ onoff = true; }
 		void m_turnOff() { onoff = false; }
