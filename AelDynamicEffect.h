@@ -13,6 +13,19 @@
 
 namespace Ael {
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Classe AelVolume
+    //  Classe que implementa um controlador de volume
+    // Variáveis-Membro:
+    //   double (volume)
+    // Funções-Membro:
+    //   1 Construtores
+    //   Método virtual (getCopy) que retorna uma cópia do estado do efeito
+    //   Método virtual (processFrame) que retorna frame processada pelo efeito
+    //   Métodos set/get do parametro volume em modo absoluto ou em decibeis
+    /////////////////////////////////////////////////////////////////////////////
+	
     class AelVolume : public AelEffect  {
         
     private:
@@ -29,6 +42,18 @@ namespace Ael {
         AelFrame& processFrame(AelFrame&);
     };
     
+    ///////////////////////////////////////////////////////////////////////////////
+    // Classe AelPanner
+    //  Classe que implementa um algoritmo de Panner que varia a intensidade de sinais
+    // stereo entre o canal direito e esquerdo
+    // Variáveis-Membro:
+    //   double (pan, panright, panleft)
+    // Funções-Membro:
+    //   1 Construtores
+    //   Método virtual (getCopy) que retorna uma cópia do estado do efeito
+    //   Método virtual (processFrame) que retorna frame processada pelo efeito
+    //   Métodos set/get do parametro pan
+    /////////////////////////////////////////////////////////////////////////////
     class AelPanner : public AelEffect {
         
     private:
@@ -46,11 +71,23 @@ namespace Ael {
         
     };
     
+    ///////////////////////////////////////////////////////////////////////////////
+    // Classe AelCompressor
+    //  Classe que implementa um algoritmo de compressor, que reduz a gama dinamica
+    // do sinal
+    // Variáveis-Membro:
+    //   double (ratio, thressholDB, attack, release, ratio)
+    //   int (threshold)
+    // Funções-Membro:
+    //   1 Construtores
+    //   Método virtual (getCopy) que retorna uma cópia do estado do efeito
+    //   Método virtual (processFrame) que retorna frame processada pelo efeito
+    //   Métodos set/get para todos os parametros
+    /////////////////////////////////////////////////////////////////////////////
     class AelCompressor : public AelEffect {
 
-        double ratio;
         int threshold;
-        double thresholdDB, attack, release;
+        double thresholdDB, attack, release, ratio;
         
         public:
         
@@ -70,6 +107,20 @@ namespace Ael {
         
     };
 
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Classe AelGate
+    //  Classe que implementa um algoritmo de compressor, que atenua o sinal em
+    // em segmentos em que o envelope do mesmo diminui abaixo de um nível threshold
+    // Variáveis-Membro:
+    //   double (attack, release, thresholdDB, attenuationDB, attenuation)
+    //   int (threshold)
+    // Funções-Membro:
+    //   1 Construtores
+    //   Método virtual (getCopy) que retorna uma cópia do estado do efeito
+    //   Método virtual (processFrame) que retorna frame processada pelo efeito
+    //   Métodos set/get para todos os parametros
+    /////////////////////////////////////////////////////////////////////////////
     
     class AelGate : public AelEffect {
         

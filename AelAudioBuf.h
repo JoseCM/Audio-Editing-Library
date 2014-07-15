@@ -16,7 +16,7 @@ namespace Ael {
 // Variáveis-Membro:
 //    n_channels (int*), samples (int*)
 // Funções-Membro:
-//    3 Construtores e 1 Destrutor
+//    3 Construtores 
 //    Métodos que retornam número de canais, e máxima amostra (módulo)
 //    Método que converte Frame mono (1 canal) numa stereo (2 canais)
 //    Overload dos operadores [], +, -, =, *
@@ -54,7 +54,7 @@ namespace Ael {
 //   ID(static int), audioFstream (fstream), streamID (int), m_nframes (int)
 //   currPosition(int), channels(int), peak(int), sampleRate(int), eos(bool)
 // Funções-Membro:
-//   3 Construtores e 1 Destrutor
+//   3 Construtores
 //   Métodos que retornam estado das variáveis membro
 //   Métodos que adicionam e retornam a próxima frame da stream
 //   Métodos de posicionamento no ficheiro que represente a stream

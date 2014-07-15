@@ -12,7 +12,7 @@ using namespace std;
 //   ID(static int), effectId(const int), effectName(string), onoff(bool)
 //   sampleRate (int), wet_level (double), n_channels(int)
 // Funções-Membro:
-//   1 Construtores e 1 Destrutor
+//   1 Construtores
 //   Métodos que retornam estado das variáveis membro
 //   Método que processa uma stream completa
 //   Método puramente virtual (processFrame) que processa uma frame

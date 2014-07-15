@@ -23,7 +23,7 @@ namespace Ael {
 //   panner(AelPanner), stream(AelAudioStream), effectChain(list<AelEffect*>)
 //   onoff(bool)
 // Funções-Membro:
-//   1 Construtores e 1 Destrutor
+//   1 Construtores
 //   Métodos que retornam/atribuem estado das variáveis membro
 //   Métodos que adicionam/removem Efeitos ao canal
 //   Método que retorna próxima frame do canal processada
@@ -82,7 +82,7 @@ namespace Ael {
 //   masterVolDb(AelVolume), masterPan(AelPanner),
 //   channel_list (list<AelChannel*>), master_effects(list<AelEffect*>)
 // Funções-Membro:
-//   1 Construtores e 1 Destrutor
+//   1 Construtores
 //   Métodos que adicionam/removem/retornam Canais e Efeitos da mixer
 //   Método que retorna próxima frame do canal processada
 //   Método que processa todas as frames do canal e retorna stream processada

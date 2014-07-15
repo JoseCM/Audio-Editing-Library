@@ -12,8 +12,22 @@ namespace Ael {
     
 ////////////////AEL VOLUME
     
+    /*******************************************************************
+     *Método getVolume
+     *Parâmetros: void
+     *retorna double que representa o estado da variável correspondente 
+     * ao volume
+     *******************************************************************/
     double AelVolume::getVolume() { return volume; }
     
+    
+    /*******************************************************************
+     *Método setVolume
+     *Parâmetros: double
+     *actualiza o estado da variavel define o volume dentro dos limites
+     *establecido
+     *retorna void
+     *******************************************************************/
     void AelVolume::setVolume(double vol) {
         
         if(MORETHAN(vol, 2.0))
@@ -26,6 +40,13 @@ namespace Ael {
             volume = vol;
     }
     
+    
+    /*******************************************************************
+     *Método setVolumeDb
+     *Parâmetros: void
+     *retorna double que representa o estado da variável correspondente
+     *ao volume traduzida em decibeis
+     *******************************************************************/
     double AelVolume::getVolumeDb(){
         
         if(EQUAL(volume, 0)) return -70.0;
@@ -33,6 +54,13 @@ namespace Ael {
         else return 20.0 * log(volume);
     }
     
+    /*******************************************************************
+     *Método setVolumedB
+     *Parâmetros: double
+     *actualiza o estado da variavel define o volume dentro dos limites 
+     *establecidos, fazendo a tradução de decibeis para valor absoluto
+     *retorna void
+     *******************************************************************/
     void AelVolume::setVolumeDb(double voldb){
         
         double dbvalue = 0.0;
@@ -50,6 +78,11 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Função membro getCopy
+     *Parâmetros: void
+     *Retorna Cópia do efeito, no estado actual em que se encontra
+     *******************************************************************/
     AelEffect* AelVolume::getCopy() {
         
         AelEffect *temp = new AelVolume(volume, n_channels, sampleRate);
@@ -60,6 +93,12 @@ namespace Ael {
         return temp;
     }
     
+    /*******************************************************************
+     *Função membro processFrame
+     *Parâmetros: AelFrame& iframe
+     *Responsável por processar a frame recebida pelo efeito volume
+     *mutiplicando a frame por o valor absoluto do volume
+     *******************************************************************/
     AelFrame& AelVolume::processFrame(AelFrame& frame){
         
         frame= frame * volume;
@@ -72,10 +111,23 @@ namespace Ael {
     
     //SÓ TEM SUPORTE PARA MONO E STEREO
     
+    /*******************************************************************
+     *Método getPan
+     *Parâmetros: void
+     *retorna double que representa o estado da variável correspondente
+     *ao parametro do panner
+     *******************************************************************/
     double AelPanner::getPan(){
         return pan;
     }
     
+    /*******************************************************************
+     *Método setPan
+     *Parâmetros: double
+     *actualiza o estado da variavel define o vpan dentro dos limites 
+     *establecidos calculando os níveis do canal direito e esquerdo correspondente
+     *retorna void
+     *******************************************************************/
     void AelPanner::setPan(double pan){
         
         if(LESSTHAN(pan, -1.0))
@@ -93,6 +145,11 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Função membro getCopy
+     *Parâmetros: void
+     *Retorna Cópia do efeito, no estado actual em que se encontra
+     *******************************************************************/
     AelEffect* AelPanner::getCopy() {
         
         AelEffect *temp = new AelPanner(pan, n_channels, sampleRate);
@@ -103,12 +160,16 @@ namespace Ael {
         return temp;
     }
     
+    /*******************************************************************
+     *Função membro processFrame
+     *Parâmetros: AelFrame& iframe
+     *Responsável por processar a frame recebida pelo efeito panner
+     *mutiplicando a frame direita e esquerda pelos valores correspondentes
+     *******************************************************************/
     AelFrame& AelPanner::processFrame(AelFrame &frame){
         
-        if(frame.getChannels() > 2)
-            return frame;
-        
-        frame.toStereo();
+        frame.toStereo(); // traduz a frame para stereo, já que este efeito
+                          //apenas opera em streams de dois canais
         
         frame[0] *= panleft;
         frame[1] *= panright;
@@ -130,6 +191,13 @@ namespace Ael {
         
     }
 
+    /*******************************************************************
+     *Método setRatio
+     *Parâmetros: double
+     *actualiza o estado da variavel define o ratio de compressão,
+     *dentro dos limites establecidos
+     *retorna void
+     *******************************************************************/
     void AelCompressor::setRatio(double ratio_){
     
         if(LESSTHAN(ratio_, 1.0))
@@ -143,6 +211,14 @@ namespace Ael {
     
     }
     
+    /*******************************************************************
+     *Método setThreshold
+     *Parâmetros: double
+     *actualiza o estado da variavel define o nível threshold do compressor
+     *dentro dos limites establecidos, convertendo o parametro recebido
+     *em decibeis para um valor absoluto
+     *retorna void
+     *******************************************************************/
     void AelCompressor::setThreshold(double thresholddb){
     
         if(MORETHAN(thresholddb, -1.0))
@@ -159,6 +235,13 @@ namespace Ael {
     
     }
     
+    /*******************************************************************
+     *Método setAttack
+     *Parâmetros: double
+     *actualiza o estado da variavel define o tempo de subida do simulador
+     *de detector de pico que produz o envelope do sinal
+     *retorna void
+     *******************************************************************/
     void AelCompressor::setAttack(double attack_) {
     
         if(MORETHAN(attack_, 2.6))
@@ -173,6 +256,13 @@ namespace Ael {
     
     }
     
+    /*******************************************************************
+     *Método setRelease
+     *Parâmetros: double
+     *actualiza o estado da variavel define o tempo de decaimento  do simulador
+     *de detector de pico que produz o envelope do sinal
+     *retorna void
+     *******************************************************************/
     void AelCompressor::setRelease(double release_){
     
         if(MORETHAN(release_, 5.0))
@@ -187,6 +277,11 @@ namespace Ael {
     
     }
     
+    /*******************************************************************
+     *Função membro getCopy
+     *Parâmetros: void
+     *Retorna Cópia do efeito, no estado actual em que se encontra
+     *******************************************************************/
     AelEffect* AelCompressor::getCopy() {
         
         AelEffect *temp =  new AelCompressor(ratio, thresholdDB, getAttackTime(), getReleaseTime(), n_channels, sampleRate);
@@ -197,19 +292,23 @@ namespace Ael {
         return temp;
     }
     
+    /*******************************************************************
+     *Função membro processFrame
+     *Parâmetros: AelFrame& iframe
+     *Responsável por processar a frame recebida pelo efeito compressor
+     *******************************************************************/
     AelFrame& AelCompressor::processFrame(AelFrame& frame){
         
         static int prev_sample = 0;
         int peak;
         int sample = abs(frame.maxSample());
         
-        //Envelope generation stage
+        //Gera o envelope do efeito simulando um circuito detector de pico
+        //de acordo com os parametros de attack e release time
         if(sample >= prev_sample){
             peak = attack * prev_sample + (1-attack) * sample;
         } else {
             peak = release * prev_sample + (1-release) * sample;
-            //OR
-            //peak = release * prev_sample;
         }
         
         prev_sample = peak;
@@ -217,7 +316,9 @@ namespace Ael {
         //envelope check test
         //frame[0] = frame[1] = peak;
         
-        //Gain calculation and adjustment stage
+        //Caso o envelope passe do limite threshold
+        //calcula o ganho corresponde de acordo com o ratio
+        //e faz o ajuste do sinal para o nível necessário
         if(peak > threshold){
 
             float logx = 20.0 * log10(peak/MAX_SAMPLE_VALUE);
@@ -242,6 +343,14 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Método setThreshold
+     *Parâmetros: double
+     *actualiza o estado da variavel define o nível threshold do gate
+     *dentro dos limites establecidos, convertendo o parametro recebido
+     *em decibeis para um valor absoluto
+     *retorna void
+     *******************************************************************/
     void AelGate::setThreshold(double thresholddb){
         
         if(MORETHAN(thresholddb, -1.0))
@@ -259,6 +368,14 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Método setAttenuation
+     *Parâmetros: double
+     *actualiza o estado da variavel define a atenuação do gate
+     *dentro dos limites establecidos, convertendo o valor recebido em 
+     *decibeis para um valor absoluto
+     *retorna void
+     *******************************************************************/
     void AelGate::setAttenuation(double att){
         
         if(MORETHAN(att, 0.0))
@@ -276,6 +393,13 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Método setAttack
+     *Parâmetros: double
+     *actualiza o estado da variavel define o tempo de subida do simulador
+     *de detector de pico que produz o envelope do sinal
+     *retorna void
+     *******************************************************************/
     void AelGate::setAttack(double attack_) {
         
         
@@ -291,6 +415,13 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Método setRelease
+     *Parâmetros: double
+     *actualiza o estado da variavel define o tempo de decaimento do simulador
+     *de detector de pico que produz o envelope do sinal
+     *retorna void
+     *******************************************************************/
     void AelGate::setRelease(double release_){
         
         if(MORETHAN(release_, 5.0))
@@ -305,6 +436,11 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Função membro getCopy
+     *Parâmetros: void
+     *Retorna Cópia do efeito, no estado actual em que se encontra
+     *******************************************************************/
     AelEffect* AelGate::getCopy() {
         
         AelEffect *temp =  new AelGate(thresholdDB, attenuationDB, getAttackTime(), getReleaseTime(), n_channels, sampleRate);
@@ -315,12 +451,20 @@ namespace Ael {
         return temp;
     }
     
+
+    /*******************************************************************
+     *Função membro processFrame
+     *Parâmetros: AelFrame& iframe
+     *Responsável por processar a frame recebida pelo efeito compressor
+     *******************************************************************/
     AelFrame& AelGate::processFrame(AelFrame& frame){
         
         static int prev_sample = 0;
         int peak;
         int sample = abs(frame.maxSample());
 
+        //Gera o envelope do efeito simulando um circuito detector de pico
+        //de acordo com os parametros de attack e release time
         if(sample >= prev_sample){
             peak = attack * prev_sample + (1-attack) * sample;
         } else {
@@ -329,6 +473,8 @@ namespace Ael {
         
         prev_sample = peak;
         
+        //Caso o envelope seja abaixo limite threshold
+        //multiplica o sinal pela atenuação definida
         if(peak < threshold)
             frame = frame * attenuation * getWetLevel() + frame * (1 - getWetLevel());
 
