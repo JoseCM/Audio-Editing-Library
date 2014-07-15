@@ -14,6 +14,21 @@
 #include <list>
 
 namespace Ael {
+
+//////////////////////////////////////////////////////////////////////////////
+// Classe AelChannel
+// Representa um Canal da Mixer
+// Variáveis-Membro:
+//   ID(static int), channel_ID(const int), name(string), volume(AelVolume)
+//   panner(AelPanner), stream(AelAudioStream), effectChain(list<AelEffect*>)
+//   onoff(bool)
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Métodos que retornam/atribuem estado das variáveis membro
+//   Métodos que adicionam/removem Efeitos ao canal
+//   Método que retorna próxima frame do canal processada
+//   Método que processa todas as frames do canal e retorna stream processada
+//////////////////////////////////////////////////////////////////////////////
     
     class AelChannel {
         
@@ -27,7 +42,6 @@ namespace Ael {
         AelAudioStream stream;
         list<AelEffect*> effectChain;
         bool onoff;
-        
         
     public:
         
@@ -59,7 +73,22 @@ namespace Ael {
         
     };
     
-    
+
+///////////////////////////////////////////////////////////////////////////////
+// Classe AelMixer
+// Representa a Mixer da Biblioteca
+// Variáveis-Membro:
+//   m_nchannels(int), m_nMaxFrames(int), currPos(int),
+//   masterVolDb(AelVolume), masterPan(AelPanner),
+//   channel_list (list<AelChannel*>), master_effects(list<AelEffect*>)
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Métodos que adicionam/removem/retornam Canais e Efeitos da mixer
+//   Método que retorna próxima frame do canal processada
+//   Método que processa todas as frames do canal e retorna stream processada
+//   Métodos de posicionamento da mixer em msegundos/número de frames
+//   Métodos que retornam/atribuem estado das variáveis membro
+//////////////////////////////////////////////////////////////////////////////
     class AelMixer{
         
     public:
@@ -72,7 +101,6 @@ namespace Ael {
         AelChannel* getChannel(const int &channelID);
         bool removeChannel(const int &channelID);
         
-        //void addEffect(int channelID, AelEffect &effect);
         
         AelFrame getNextFrame();
         AelAudioStream* getFullMix();

@@ -10,6 +10,12 @@
 
 namespace Ael{
 	
+    /******************************************************************
+     *Função membro getNextFrame() da classe AelAudioStream
+     *Parâmetros: void
+     *Responsável por obter próxima frame da stream para processamento
+     *Retorna próxima Frame (sucesso) / Frame vazia (insucesso)
+     *******************************************************************/
 	AelFixDelayLine::AelFixDelayLine(float time, float sampleRate, int n_ch) : AelDelayLine(time, sampleRate, n_ch), position_r(0), position_w(0)
 	{
 		

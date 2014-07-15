@@ -10,6 +10,17 @@ using namespace std;
 
 namespace Ael {
 
+/////////////////////////////////////////////////////////////////////////
+// Classe AelFrame
+// Representa a estrutura básica de uma Stream de Audio (Frame)
+// Variáveis-Membro:
+//    n_channels (int*), samples (int*)
+// Funções-Membro:
+//    3 Construtores e 1 Destrutor
+//    Métodos que retornam número de canais, e máxima amostra (módulo)
+//    Método que converte Frame mono (1 canal) numa stereo (2 canais)
+//    Overload dos operadores [], +, -, =, *
+/////////////////////////////////////////////////////////////////////////
 
 	class AelFrame {
 
@@ -32,13 +43,24 @@ namespace Ael {
 		AelFrame operator*(float) const;
 		~AelFrame();
         
-        friend class AelAudioStream;
+        friend class AelAudioStream;    //Classe AelAudioStream pode aceder
+                                        //aos membros privados da classe AelFrame
 	};
 
-//////////////////////////////////////////////
-// AUDIO BUFFER 
-
-    
+/////////////////////////////////////////////////////////////////////////////
+// Classe AelAudioStream
+// Representa uma stream de áudio
+// Variáveis-Membro:
+//   ID(static int), audioFstream (fstream), streamID (int), m_nframes (int)
+//   currPosition(int), channels(int), peak(int), sampleRate(int), eos(bool)
+// Funções-Membro:
+//   3 Construtores e 1 Destrutor
+//   Métodos que retornam estado das variáveis membro
+//   Métodos que adicionam e retornam a próxima frame da stream
+//   Métodos de posicionamento no ficheiro que represente a stream
+//   Método que grava stream de áudio num ficheiro.wav
+//   Métodos que grava e remove stream de áudio num SD card (usado no 8051)
+////////////////////////////////////////////////////////////////////////////
 	class AelAudioStream
 	{
         

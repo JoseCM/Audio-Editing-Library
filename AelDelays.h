@@ -5,6 +5,18 @@
 
 namespace Ael {
 	
+    
+///////////////////////////////////////////////////////////////////////////////
+// Classe AelDelayLine
+// Representa a interface (classe Base) de uma estrutura de
+//   dados auxiliar com as frames atrasadas no tempo
+// Variáveis-Membro:
+//   sampleRate(int), maxDelayLen(int), channels(int), delay(vector<AelFrames>)
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Métodos de escrita/leitura na delay line (puramente virtuais)
+//////////////////////////////////////////////////////////////////////////////
+    
 	class AelDelayLine
 	{
 	public:
@@ -21,7 +33,18 @@ namespace Ael {
 		vector<AelFrame> delay;
 		
 	};
-	
+
+///////////////////////////////////////////////////////////////////////////////
+// Classe AelFixDelayLine
+// Representa um delay de frames de uma stream, com tamanho fixo
+// Variáveis-Membro:
+//   position_r(int), position_w(int)
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Métodos virtuais implementados que traduzem a escrita/leitura no delay
+//  com tamanho fixo
+//   Método que retorna tempo de delay
+//////////////////////////////////////////////////////////////////////////////
 	class AelFixDelayLine : public AelDelayLine
 	{
 	public:
@@ -36,7 +59,19 @@ namespace Ael {
 		int position_w;
 		
 	};
-	
+
+///////////////////////////////////////////////////////////////////////////////
+// Classe AelVDelayLine
+// Representa um delay de frames de uma stream, com tamanho variável
+// Variáveis-Membro:
+//   vdt (float), position_w (int)
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Métodos virtuais implementados que traduzem a escrita/leitura no delay
+//  com tamanho variável
+//   Método que retorna tempo de delay
+//   Método que atribui novo tamanho ao delay
+//////////////////////////////////////////////////////////////////////////////
 	class AelVDelayLine : public AelDelayLine {
 	public:
 		AelVDelayLine(float del = 0.1, float maxdel = 2, float sampleRate = 44100, int n_ch = 2);
@@ -52,7 +87,19 @@ namespace Ael {
 	};
 	
 	
-	
+///////////////////////////////////////////////////////////////////////////////
+// Classe AelVDelayLine
+// Representa um filtro Comb Universal, a partir do qual é possível obter dois
+//   tipos diferentes de filtros Comb (IIR e FIR), um filtro Allpass e um delay
+//   por variação dos coeficientes
+// Variáveis-Membro:
+//   ucombdelay(AelVDelayLine), BL(float), FF(float), FB(float)
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Método virtual (getCopy) que retorna uma cópia do estado do efeito
+//   Método virtual (processFrame) que retorna frame processada pelo efeito
+//   Métodos set/get dos coeficientes do filtro e do tempo de atraso
+/////////////////////////////////////////////////////////////////////////////
 	class AelUniComb : public AelEffect {
 		
 	public:
@@ -76,7 +123,22 @@ namespace Ael {
 		float FB;
 		
 	};
-	
+
+///////////////////////////////////////////////////////////////////////////////
+// Classe
+    
+    
+// Representa um filtro Comb Universal, a partir do qual é possível obter dois
+//   tipos diferentes de filtros Comb (IIR e FIR), um filtro Allpass e um delay
+//   por variação dos coeficientes
+// Variáveis-Membro:
+//   ucombdelay(AelVDelayLine), BL(float), FF(float), FB(float)
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Método virtual (getCopy) que retorna uma cópia do estado do efeito
+//   Método virtual (processFrame) que retorna frame processada pelo efeito
+//   Métodos set/get dos coeficientes do filtro e do tempo de atraso
+/////////////////////////////////////////////////////////////////////////////
 	class AelFlanger : public AelEffect {
 		
 		float delayTime;
@@ -108,6 +170,22 @@ namespace Ael {
 		
 	};
 	
+    
+///////////////////////////////////////////////////////////////////////////////
+// Classe
+
+
+//  Composta por 4 Comb Filters e 2 AllPass que simulam varios ecos em simul
+//  taneo criando o efeito reverb
+// Variáveis-Membro:
+//   6 UniComb - 4 CombFilter 2 AllPass com parametros predefenidos na criacao
+// da classe e nao variaveis
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Método virtual (getCopy) que retorna uma cópia do estado do efeito
+//   Método virtual (processFrame) que retorna frame processada pelo efeito
+//   Métodos set/get dos coeficientes do efeito
+/////////////////////////////////////////////////////////////////////////////
 	class AelReverb: public AelEffect{
 		
 		float RVT;
@@ -130,6 +208,21 @@ namespace Ael {
 		
 		
 	};
+    
+///////////////////////////////////////////////////////////////////////////////
+// Classe
+    
+
+//  Classe que implementa o effeito Echo utilizando um delay com
+//  feeback
+// Variáveis-Membro:
+//   ucombdelay
+// Funções-Membro:
+//   1 Construtores e 1 Destrutor
+//   Método virtual (getCopy) que retorna uma cópia do estado do efeito
+//   Método virtual (processFrame) que retorna frame processada pelo efeito
+//   Métodos set/get dos coeficientes do filtro e do tempo de atraso
+/////////////////////////////////////////////////////////////////////////////
 	
 	class AelEcho : public AelEffect{
 	public:
