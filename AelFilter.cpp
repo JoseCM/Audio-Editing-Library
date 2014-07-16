@@ -11,9 +11,15 @@
 
 namespace Ael {
     
-    /************************************
-    *  AelFilter
-    ************************************/
+    
+//////////////////////////////////////////////////////////////////
+// Classe AelFilter
+//////////////////////////////////////////////////////////////////
+
+    /******************************************************************
+     *Construtor da Classe AelFilter
+     *Parâmetros: float (gain_, cutoff_), int (n_ch, sampleR)
+     *******************************************************************/
 
     AelFilter::AelFilter(float gain_, float cutoff_, int n_ch, int sampleR) : AelEffect(n_ch, sampleR), gain(gain_), cutoff(cutoff_) { }
     
@@ -30,10 +36,15 @@ namespace Ael {
             gain = gain_;
     }
     
+
+//////////////////////////////////////////////////////////////////
+// Classe AelIIR
+//////////////////////////////////////////////////////////////////
     
-    /************************************
-     *  AelIIR - 1st Order
-     ************************************/
+    /******************************************************************
+     *Construtor da Classe AelIIR
+     *Parâmetros: float (gain_, cutoff_), int (n_ch, Sr)
+     *******************************************************************/
     
     AelIIR::AelIIR(float G, float Coff ,int n_ch, int Sr) : AelFilter(G, Coff, n_ch, Sr) , out_1(n_ch), in_1(n_ch) {
         coef_a.assign(2, 0.0);
@@ -41,6 +52,11 @@ namespace Ael {
         set_LPF();  //defaut LPF
     }
     
+    /******************************************************************
+     *Método set_LPF da Classe AelIIR
+     *Parâmetros: void
+     *Define comportamento low pass do filtro
+     *******************************************************************/
     void AelIIR::set_LPF(){
         
         ON = lowpass;
@@ -51,6 +67,11 @@ namespace Ael {
         coef_b[0] = x;
     }
     
+    /******************************************************************
+     *Método set_HPF da Classe AelIIR
+     *Parâmetros: void
+     *Define comportamento high pass do filtro
+     *******************************************************************/
     void AelIIR::set_HPF(){
         
         ON = highpass;
@@ -80,6 +101,12 @@ namespace Ael {
     
     }
     
+    /*******************************************************************
+     *Função membro processFrame da classe AelIIR
+     *Parâmetros: AelFrame& frame
+     *Responsável por processar a frame recebida pelo efeito produzido
+     *pelo filtro de 1ª ordem
+     *******************************************************************/
     AelFrame& AelIIR::processFrame(AelFrame& Frame){
         //y[n] = a0 * x[n] + a1 * x[n-1] + b1 * y[n-1]
         
@@ -96,6 +123,11 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Função membro getCopy
+     *Parâmetros: void
+     *Retorna Cópia do efeito, no estado actual em que se encontra
+     *******************************************************************/
     AelEffect* AelIIR::getCopy(){
         AelIIR *cp = new AelIIR(gain, cutoff, getNChannels(), getSampleRate());
     
@@ -115,9 +147,9 @@ namespace Ael {
         return cp;
     }
     
-    /************************************
-     *  ButterWorth - 2nd Order
-     ************************************/
+//////////////////////////////////////////////////////////////////
+// Classe AelButterWorth
+//////////////////////////////////////////////////////////////////
     
     AelButterWorth::AelButterWorth(float G, float Coff, float BW, int n_ch, int Sr): AelFilter(G, Coff, n_ch, Sr), out_1(n_ch), out_2(n_ch),
     in_1(n_ch), in_2(n_ch), BandWidth(BW)
@@ -127,6 +159,11 @@ namespace Ael {
         set_LPF();    //default
     }
     
+    /******************************************************************
+     *Método set_LPF da Classe AelIIR
+     *Parâmetros: void
+     *Define comportamento LOW pass do filtro
+     *******************************************************************/
     void AelButterWorth::set_LPF(){
         
         ON = lowpass;
@@ -142,6 +179,12 @@ namespace Ael {
         
     }
     
+    
+    /******************************************************************
+     *Método set_HPF da Classe AelIIR
+     *Parâmetros: void
+     *Define comportamento high pass do filtro
+     *******************************************************************/
     void AelButterWorth::set_HPF(){
         
         ON = highpass;
@@ -157,6 +200,11 @@ namespace Ael {
         
     }
     
+    /******************************************************************
+     *Método set_NOTCH da Classe AelIIR
+     *Parâmetros: void
+     *Define comportamento notch do filtro
+     *******************************************************************/
     void AelButterWorth::set_NOTCH(){
         
         ON = rejectband;
@@ -174,6 +222,11 @@ namespace Ael {
         
     }
     
+    /******************************************************************
+     *Método set_BPF da Classe AelIIR
+     *Parâmetros: void
+     *Define comportamento bandpass do filtro
+     *******************************************************************/
     void AelButterWorth::set_BPF(){
         
         ON = bandpass;
@@ -235,6 +288,12 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Função membro processFrame da classe AelButterWorth
+     *Parâmetros: AelFrame& frame
+     *Responsável por processar a frame recebida pelo efeito produzido
+     *pelo filtro de 2ª ordem
+     *******************************************************************/
     AelFrame& AelButterWorth::processFrame(AelFrame& Frame){
         //y(n) = a0x(n) + a1x(n-1) + a2x(n-2) -  b0y(n - 1) - b1y(n-2).
         
@@ -254,6 +313,11 @@ namespace Ael {
         
     }
     
+    /*******************************************************************
+     *Função membro getCopy
+     *Parâmetros: void
+     *Retorna Cópia do efeito, no estado actual em que se encontra
+     *******************************************************************/
     AelEffect* AelButterWorth::getCopy(){
         AelButterWorth *cp = new AelButterWorth(gain, cutoff, BandWidth ,getNChannels(), getSampleRate());
         

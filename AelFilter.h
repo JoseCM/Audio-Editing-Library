@@ -13,7 +13,16 @@
 
 namespace Ael {
     
-    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Classe AelFilter
+    //  Classe base com as características comuns aos filtros
+    // Variáveis-Membro:
+    //   vector<float> (coef_a, coef_b), float (gain, cutoff)
+    // Funções-Membro:
+    //   1 Construtores
+    //   Métodos set e get das variáveis membro
+    //   Métodos puramente virtual: getCopy, processFrame
+    /////////////////////////////////////////////////////////////////////////////
     class AelFilter : public AelEffect {
     
     protected:
@@ -31,7 +40,16 @@ namespace Ael {
         virtual AelFrame& processFrame(AelFrame&) = 0;
     };
     
-    //1st Order
+    ///////////////////////////////////////////////////////////////////////////////
+    // Classe AelIIR
+    //  Classe que implementa um filtro de 1ª ordem IIR
+    // Variáveis-Membro:
+    //   AelFrame (out_1, in_1), enum iir (ON)
+    // Funções-Membro:
+    //   1 Construtores
+    //   Implementação de métodos virtuais da classe base (getCopy e processframe)
+    //   Métodos que definem comporatmento do filtro (LPF ou HPF)
+    /////////////////////////////////////////////////////////////////////////////
     class AelIIR: public AelFilter{
         
         enum iir {lowpass, highpass} ON;
@@ -48,7 +66,16 @@ namespace Ael {
         virtual AelEffect* getCopy();
     };
     
-    //2nd Order
+    ///////////////////////////////////////////////////////////////////////////////
+    // Classe AelButterWorth
+    //  Classe que implementa um filtro genérico de 2ª ordem buttherWorth
+    // Variáveis-Membro:
+    //   AelFrame (out_1, in_1, out_2, in_2), enum butterworth(ON), float (bandwith)
+    // Funções-Membro:
+    //   1 Construtores
+    //   Implementação de métodos virtuais da classe base (getCopy e processframe)
+    //   Métodos que definem comporatmento do filtro (LPF, HPF, BPF, NOTCH)
+    /////////////////////////////////////////////////////////////////////////////
     class AelButterWorth: public AelFilter{
         
         enum butterworth {lowpass, highpass, bandpass, rejectband} ON;

@@ -10,6 +10,16 @@ using namespace std;
 
 namespace Ael{
 
+///////////////////////////////////////////////////////////////////////////////
+// Classe AelPlayer
+// Responsável pela reprodução de áudio da biblioteca
+// Variáveis-Membro:
+//   AelMixer*, RtAudio, thread*, int*,  int, float, STATUSPLAYER
+// Funções-Membro:
+//   2 Construtores
+//   Método start, pause, stop (estado de reprodução)
+//   Método tick (funcção callback)
+/////////////////////////////////////////////////////////////////////////////
 	class AelPlayer {
 		
 	public:

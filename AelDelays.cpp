@@ -434,7 +434,7 @@ namespace Ael{
 		float mod = sin(modAngle);
 		modAngle += angleInc;
         
-		delayLine.setDelayTime(delayTime + (mod * depth));
+		delayLine.setDelayTime(delayTime + (mod * depth)); // set do delay time,modulada pela onda sinusoidal
         
 		AelFrame temp2 = delayLine.read();
         
@@ -447,14 +447,20 @@ namespace Ael{
 		return frame;
 	}
     
+    /*******************************************************************
+     *Função membro getCopy
+     *Parâmetros: void
+     *Retorna Cópia do efeito, no estado actual em que se encontra
+     *******************************************************************/
     AelEffect* AelFlanger::getCopy(){
         AelEffect* temp = new AelFlanger(delayTime, feedBack, LFOfreq, depth, n_channels, sampleRate);
         return temp;
     }
 	
 	
-	//////////////////////AELREVERB
-	
+//////////////////////////////////////////////////////////////////
+//Classe AelReverb
+//////////////////////////////////////////////////////////////////
 	AelReverb::AelReverb(float RVT_, int n_ch, int samplerate): AelEffect(n_ch,samplerate), RVT(RVT_),
 	C1(0.0297, 0, pow(0.001, 0.0297/RVT_), 1, samplerate, n_ch),
 	C2(0.0371, 0, pow(0.001, 0.0371/RVT_), 1, samplerate, n_ch),
@@ -489,6 +495,11 @@ namespace Ael{
 		return RVT;
 	}
 	
+    /*******************************************************************
+     *Função membro processFrame
+     *Parâmetros: AelFrame& iframe
+     *Responsável por processar a frame recebida pelo efeito reverb
+     *******************************************************************/
 	AelFrame& AelReverb::processFrame(AelFrame& iFrame){
 		
 		
@@ -499,12 +510,12 @@ namespace Ael{
 		C3.processFrame(aux3);
 		C4.processFrame(aux4);
 		
-		iFrame = (aux1 * 0.25) + (aux2 * 0.25) + (aux3 * 0.25) + (aux4 * 0.25);
+		iFrame = (aux1 * 0.25) + (aux2 * 0.25) + (aux3 * 0.25) + (aux4 * 0.25); //frame é processada por 4 filtros Comb
 		
 		A1.processFrame(iFrame);
-		A2.processFrame(iFrame);
+		A2.processFrame(iFrame); //frame é processada por 2 filtros Allpass
 		
-		iFrame = iFrame * getWetLevel() + temp * (1 - getWetLevel());
+		iFrame = iFrame * getWetLevel() + temp * (1 - getWetLevel());  //wetdry
 		
 		return iFrame;
 		
@@ -516,7 +527,9 @@ namespace Ael{
 	}
 	
 	
-	////////////////////////AELECHO
+//////////////////////////////////////////////////////////////////
+//Classe AelEco
+//////////////////////////////////////////////////////////////////
 	
 	AelEcho::AelEcho(float echo_time, float feedback, int n_ch, int samplerate) : AelEffect(n_ch,samplerate), echodelay(1, 1, feedback, 0, samplerate, n_ch)
 	{
@@ -559,10 +572,21 @@ namespace Ael{
         return echodelay.getDelayTime();
     }
 	
+    /*******************************************************************
+     *Função membro processFrame
+     *Parâmetros: AelFrame& iframe
+     *Responsável por processar a frame recebida pelo efeito echo
+     *Chama process frame da classe AelUniComb
+     *******************************************************************/
 	AelFrame& AelEcho::processFrame(AelFrame& iFrame){
 		return echodelay.processFrame(iFrame);
 	}
 	
+    /*******************************************************************
+     *Função membro getCopy
+     *Parâmetros: void
+     *Retorna Cópia do efeito, no estado actual em que se encontra
+     *******************************************************************/
 	AelEffect* AelEcho::getCopy() {
 		AelEffect* temp = new AelEcho(echodelay.getDelayTime(), echodelay.getFB(), n_channels, sampleRate);
 		return temp;

@@ -204,7 +204,7 @@ namespace Ael {
 	};
     
 ///////////////////////////////////////////////////////////////////////////////
-// Classe AelEffect
+// Classe AelEcho
 //  Classe que implementa o effeito Echo utilizando um delay com feeback
 // Variáveis-Membro:
 //   AelUniComb (echodelay)
