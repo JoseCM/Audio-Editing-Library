@@ -5,7 +5,7 @@
 
 namespace Ael {
 	
-    
+	
 ///////////////////////////////////////////////////////////////////////////////
 // Classe AelDelayLine
 // Representa a interface (classe Base) de uma estrutura de
@@ -16,7 +16,7 @@ namespace Ael {
 //   1 Construtores
 //   Métodos de escrita/leitura na delay line (puramente virtuais)
 //////////////////////////////////////////////////////////////////////////////
-    
+	
 	class AelDelayLine
 	{
 	public:
@@ -137,7 +137,7 @@ namespace Ael {
 //   Métodos set/get das variáveis membro
 /////////////////////////////////////////////////////////////////////////////
 	class AelFlanger : public AelEffect {
-        
+		
 		float delayTime;
 		float feedBack;
 		float modAngle;
@@ -145,29 +145,29 @@ namespace Ael {
 		float LFOfreq;
 		float depth;
 		AelVDelayLine delayLine;
-        
+		
 	public:
-        
+		
 		AelFlanger(float delay, float feedback, float modFreq = 1.0, float depth_ = 0.001, int n_chan = 2, int samplerate = 44100) : AelEffect(n_chan, samplerate), delayLine(delay, delay + depth_, sampleRate, n_chan) , delayTime(delay), feedBack(feedback), modAngle(0), angleInc(2 * M_PI *  1 / sampleRate), LFOfreq(modFreq), depth(depth_) {
 		}
-        
+		
 		void setDelayTime(float dt);
 		void setFeedBack(float fb);
 		void setLFOFreq(float freq);
 		void setDepth(float dp);
-        
+		
 		float getDelayTime();
 		float getFeedBack();
 		float getLFOFreq();
 		float getDepth();
-        
+		
 		AelEffect* getCopy();
-        
+		
 		virtual AelFrame& processFrame(AelFrame&);
-        
+		
 	};
 
-    
+	
 ///////////////////////////////////////////////////////////////////////////////
 // Classe AelReverb
 // Representa efeito de Reverb
@@ -202,7 +202,7 @@ namespace Ael {
 		
 		
 	};
-    
+	
 ///////////////////////////////////////////////////////////////////////////////
 // Classe AelEcho
 //  Classe que implementa o effeito Echo utilizando um delay com feeback
@@ -223,7 +223,7 @@ namespace Ael {
 		bool setFB(float fb);
 		void setDelayTime(float);
 		float getFB();
-        float getDelayTime();
+		float getDelayTime();
 		AelEffect* getCopy();
 		virtual AelFrame& processFrame(AelFrame& iFrame);
 		

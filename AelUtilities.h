@@ -47,10 +47,10 @@ namespace Ael{
 		string name;
 	public:
 		AelExecption(string n);
-        ~AelExecption() _NOEXCEPT;
+		~AelExecption() _NOEXCEPT;
 		const char* what();
 	};
-    
+	
 }
 
 #endif
