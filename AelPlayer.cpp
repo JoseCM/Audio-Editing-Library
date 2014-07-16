@@ -9,7 +9,6 @@ namespace Ael{
 		Ael::AelPlayer* player = reinterpret_cast<AelPlayer*>(dataPointer);
         int* out = reinterpret_cast<int*>(outputBuffer);
 
-
 		player->threadptr->join();
 		memcpy(outputBuffer, player->frames, player->bufferFrames * player->channels * sizeof(int));
 		delete player->threadptr; player->threadptr = NULL;
