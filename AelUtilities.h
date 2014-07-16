@@ -34,22 +34,23 @@
 #define MOREEQ(A, B) (EQUAL(A, B) || MORETHAN(A, B))
 
 
-//////////////////////////////////////////////
-// AEL EXCEPTION
-
 using namespace std;
 
 namespace Ael{
-    
+
+///////////////////////////////////////////////////////////
+//Classe AelException
+//Responsável pelo tratamento das excepções da biblioteca
+///////////////////////////////////////////////////////////
 	class AelExecption : public exception{
 	private:
 		string name;
 	public:
 		AelExecption(string n);
-        ~AelExecption() _NOEXCEPT;
+		~AelExecption() _NOEXCEPT;
 		const char* what();
 	};
-    
+	
 }
 
 #endif

@@ -7,7 +7,7 @@ namespace Ael{
 
 
 		Ael::AelPlayer* player = reinterpret_cast<AelPlayer*>(dataPointer);
-        int* out = reinterpret_cast<int*>(outputBuffer);
+		int* out = reinterpret_cast<int*>(outputBuffer);
 
 		player->threadptr->join();
 		memcpy(outputBuffer, player->frames, player->bufferFrames * player->channels * sizeof(int));
@@ -17,9 +17,9 @@ namespace Ael{
 		/*if (player->status == PLAYING) return 0;
 		else if (player->status == PAUSED) return 1;
 		else  return 2;
-        */
-        
-        return 0;
+		*/
+		
+		return 0;
 	}
 
 
@@ -28,37 +28,37 @@ namespace Ael{
 
 		
 	}
-    
-    void AelPlayer::openStream(){
-        
-        RtAudio::StreamParameters parameters;
+	
+	void AelPlayer::openStream(){
+		
+		RtAudio::StreamParameters parameters;
 		parameters.deviceId = dac.getDefaultOutputDevice();
 		parameters.nChannels = channels;
-        
+		
 		RtAudioFormat format = RTAUDIO_SINT32;
-        
+		
 		try{
 			dac.openStream(&parameters, NULL, format, (unsigned int)sampleRate, (unsigned int*)&bufferFrames, Ael::tick, (void*) this);
 		}
 		catch (RtAudioError &error){
 			error.printMessage();
 		}
-        
-        
-    }
+		
+		
+	}
 
 	void AelPlayer::start(){
-        
-        //static int firstTimePlaying = 1;
-        
+		
+		//static int firstTimePlaying = 1;
+		
 		if (status == STOPPED){
-            threadptr = new thread(this->tick, this);
-            openStream();
+			threadptr = new thread(this->tick, this);
+			openStream();
 		}
 
 		try{
 			dac.startStream();
-            status = PLAYING;
+			status = PLAYING;
 		}
 		catch (RtAudioError &error){
 			error.printMessage();
@@ -68,14 +68,14 @@ namespace Ael{
 
 
 	void AelPlayer::pause(){
-        
-        if(status != PLAYING)
-            return;
-        
+		
+		if(status != PLAYING)
+			return;
+		
 		try{
 			if (dac.isStreamOpen())
 				dac.stopStream();
-            status = PAUSED;
+			status = PAUSED;
 		}
 		catch (RtAudioError &error){
 			error.printMessage();
@@ -83,18 +83,18 @@ namespace Ael{
 	}
 
 	void AelPlayer::stop(){
-        
-        if(status != STOPPED)
-            dac.closeStream();
-        
-        if(threadptr != NULL){
-            if(threadptr->joinable())
-                threadptr->join();
-            delete threadptr;
-        }
+		
+		if(status != STOPPED)
+			dac.closeStream();
+		
+		if(threadptr != NULL){
+			if(threadptr->joinable())
+				threadptr->join();
+			delete threadptr;
+		}
 
-        mixerptr->setPosFrames(0);
-        status = STOPPED;
+		mixerptr->setPosFrames(0);
+		status = STOPPED;
 	}
 
 	void AelPlayer::tick(AelPlayer* player){
@@ -102,12 +102,12 @@ namespace Ael{
 		int* initframes = player->frames;
 
 		for (unsigned int i = 0; i < player->bufferFrames; i++){
-            Ael::AelFrame aux = player->mixerptr->getNextFrame();
+			Ael::AelFrame aux = player->mixerptr->getNextFrame();
 			for (int j = 0; j < player->channels; j++){
 				*initframes++ = aux[j];
 			}
 		}
-        
+		
 	}
 
 	AelPlayer::~AelPlayer(){
